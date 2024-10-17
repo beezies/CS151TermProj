@@ -1,10 +1,7 @@
 package FinanceUI;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.stage.Stage;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,26 +9,31 @@ import javafx.scene.layout.VBox;
 
 public class FinanceApp extends Application{
 	
-	VBox homePane = new VBox();
-	Label label = new Label("To be implemented: home page \n(Add account button, \naccounts view, "
-			+ "\nschedule transaction button, \ntransactions view)");
-	Button newAccButton = new Button("Add New Account");
 	Scene homeScene;
 	Scene newAccScene;
 	
 	@Override
     public void start(Stage stage) {
-				
-		homePane.getChildren().add(label);
-		homePane.getChildren().add(newAccButton);
 		
-		homeScene = new Scene(homePane, 300, 300);
+		homeScene = getHomeScene(stage);
+		newAccScene = getNewAccScene(stage);
+		
         stage.setScene(homeScene);
         stage.show();
 		
-        newAccScene = getNewAccScene(stage);
-		newAccButton.setOnAction(e -> stage.setScene(newAccScene));
     }
+	
+	public Scene getHomeScene(Stage stage) {
+		VBox pane = new VBox();
+		Button newAccButton = new Button("Add New Account");
+		Label label = new Label("To be implemented: home page \n(Add account button, \naccounts view, "
+				+ "\nschedule transaction button, \ntransactions view)");
+		pane.getChildren().add(label);
+		pane.getChildren().add(newAccButton);
+		
+		newAccButton.setOnAction(e -> stage.setScene(newAccScene));
+		return new Scene(pane, 300, 300);
+	}
 	
 	public Scene getNewAccScene(Stage stage) {
 		VBox pane = new VBox();

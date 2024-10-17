@@ -63,9 +63,11 @@ public class FinanceApp extends Application{
 		
 		Label lbl = new Label("To be implemented: new account page \n(Account name,"
 				+ " \ncreation date, \nstarting balance)");
-		TextField nameTF = new TextField("Enter Account Name");
+		TextField nameTF = new TextField();
+		nameTF.setPromptText("Enter Account Name");
 		DatePicker dp = new DatePicker(date);
-		TextField balanceTF = new TextField("Enter Starting Balance");
+		TextField balanceTF = new TextField();
+		balanceTF.setPromptText("Enter Starting Balance");
 		
 		Button addBtn = new Button("Add Account");
 		Button cancelBtn = new Button("Cancel");

@@ -1,17 +1,17 @@
 package FinanceUI;
 
 import javafx.application.Application;
-import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
-public class HomePage extends Application{
-
+public class NewAccountPage extends Application{
+	
 	@Override
     public void start(Stage stage) {
-		
-		var label = new Label("To be implemented: home page \n(Add account button, \naccounts view, \nschedule transaction button, \ntransactions view)");
+
+        var label = new Label("To be implemented: new account page \n(Account name, \ncreation date, \nstarting balance)");
         var scene = new Scene(new StackPane(label), 640, 480);
         stage.setTitle("Create New Account");
         stage.setScene(scene);
@@ -21,5 +21,6 @@ public class HomePage extends Application{
     public static void main(String[] args) {
         launch(args);
     }
+
 
 }

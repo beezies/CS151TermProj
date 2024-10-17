@@ -3,12 +3,14 @@ package FinanceUI;
 import java.time.LocalDate;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -30,15 +32,28 @@ public class FinanceApp extends Application{
     }
 	
 	public Scene getHomeScene(Stage stage) {
-		VBox pane = new VBox();
+		BorderPane pane = new BorderPane();
+		HBox top = new HBox();
+		VBox center = new VBox();
+		
+		Label title = new Label("Money Money Money");
+		title.setPadding(new Insets(50, 100, 50, 230));
+		
+		Label accsLbl = new Label("Accounts");
 		Button newAccBtn = new Button("Add New Account");
-		Label lbl = new Label("To be implemented: home page \n(Add account button, \naccounts view, "
-				+ "\nschedule transaction button, \ntransactions view)");
-		pane.getChildren().add(lbl);
-		pane.getChildren().add(newAccBtn);
+		Label transLbl = new Label("Upcoming Transactions");
+		Button transBtn = new Button("Schedule Transaction");
+		
+		top.getChildren().add(title);
+		pane.setTop(top);
+		center.getChildren().add(accsLbl);
+		center.getChildren().add(newAccBtn);
+		center.getChildren().add(transLbl);
+		center.getChildren().add(transBtn);
+		pane.setCenter(center);
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
-		return new Scene(pane, 450, 450);
+		return new Scene(pane, 600, 450);
 	}
 	
 	public Scene getNewAccScene(Stage stage) {

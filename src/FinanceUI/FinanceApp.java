@@ -29,14 +29,19 @@ public class FinanceApp extends Application{
         stage.setScene(homeScene);
         stage.show();
 		
-		newAccButton.setOnAction(e -> stage.setScene(getNewAccScene()));
+        newAccScene = getNewAccScene(stage);
+		newAccButton.setOnAction(e -> stage.setScene(newAccScene));
     }
 	
-	public Scene getNewAccScene() {
+	public Scene getNewAccScene(Stage stage) {
 		VBox pane = new VBox();
+		Button backButton = new Button("Cancel");
 		Label lbl = new Label("To be implemented: new account page \n(Account name,"
 				+ " \ncreation date, \nstarting balance)");
+		pane.getChildren().add(backButton);
 		pane.getChildren().add(lbl);
+		
+		backButton.setOnAction(e -> stage.setScene(homeScene));
 		return new Scene(pane, 300, 300);
 	}
 	

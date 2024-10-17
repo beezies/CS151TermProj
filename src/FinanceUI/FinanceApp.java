@@ -100,6 +100,7 @@ public class FinanceApp extends Application{
 					showAlert("Invalid Balance", "Starting balance must be a valid number.");
 				} else {
 					saveAccountData(accountName, openingDate, balanceStr);
+					showAlert("Valid New Account Submission", "New account saves successfully.");
 					stage.setScene(homeScene);
 				}
 

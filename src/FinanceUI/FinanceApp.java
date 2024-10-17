@@ -1,12 +1,15 @@
 package FinanceUI;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -22,7 +25,7 @@ public class FinanceApp extends Application{
 	Scene homeScene;
 	Scene newAccScene;
 	LocalDate date = LocalDate.now();
-	private static final String FILE_PATH = "accounts.csv"; // Path for storing data
+	private static final String FILE_PATH = "accounts.csv";
 
 	@Override
     public void start(Stage stage) {
@@ -89,7 +92,20 @@ public class FinanceApp extends Application{
 				String accountName = nameTF.getText();
 				LocalDate openingDate = dp.getValue();
 				String balanceStr = balanceTF.getText();
-				saveAccountData(accountName, openingDate, balanceStr);
+				if (isDuplicateAccount(accountName)) {
+					showAlert("Duplicate Account", "An account with this name already exists.");
+				} else if (openingDate.isAfter(LocalDate.now())) {
+					showAlert("Invalid Date", "Opening date cannot be in the future.");
+				} else if (!isDouble(balanceStr)) {
+					showAlert("Invalid Balance", "Starting balance must be a valid number.");
+				} else {
+					saveAccountData(accountName, openingDate, balanceStr);
+					stage.setScene(homeScene);
+				}
+
+				nameTF.clear();
+				dp.setValue(LocalDate.now());
+				balanceTF.clear();
 
 				stage.setScene(homeScene);
 		});
@@ -113,6 +129,55 @@ public class FinanceApp extends Application{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Checks that desired new account name is not a duplicate.
+	 *
+	 * @param accountName
+	 * @return
+	 */
+	private boolean isDuplicateAccount(String accountName) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split(",");
+				if (parts[0].trim().equalsIgnoreCase(accountName)) {
+					return true;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * Checks that desired new account balance is a valid number.
+	 * @param str
+	 * @return
+	 */
+	private boolean isDouble(String str) {
+		try {
+			Double.parseDouble(str);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Prompts user with reason for failed submission of new account.
+	 *
+	 * @param title
+	 * @param message
+	 */
+	private void showAlert(String title, String message) {
+		Alert alert = new Alert(Alert.AlertType.WARNING);
+		alert.setTitle(title);
+		alert.setHeaderText(null);
+		alert.setContentText(message);
+		alert.showAndWait();
 	}
 	
     public static void main(String[] args) {

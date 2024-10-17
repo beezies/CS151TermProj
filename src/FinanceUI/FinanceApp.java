@@ -38,6 +38,12 @@ public class FinanceApp extends Application{
 		
     }
 	
+	/**
+	 * Returns scene for home page.
+	 * 
+	 * @param stage
+	 * @return Home scene
+	 */
 	public Scene getHomeScene(Stage stage) {
 		BorderPane pane = new BorderPane();
 		HBox top = new HBox();
@@ -63,6 +69,12 @@ public class FinanceApp extends Application{
 		return new Scene(pane, 600, 450);
 	}
 	
+	/**
+	 * Returns scene for new account page.
+	 * 
+	 * @param stage
+	 * @returnn New account scene
+	 */
 	public Scene getNewAccScene(Stage stage) {
 		VBox pane = new VBox();
 		VBox fieldPane = new VBox();
@@ -100,7 +112,7 @@ public class FinanceApp extends Application{
 					showAlert("Invalid Balance", "Starting balance must be a valid number.");
 				} else {
 					saveAccountData(accountName, openingDate, balanceStr);
-					showAlert("Valid New Account Submission", "New account saves successfully.");
+					showAlert("Valid New Account Submission", "New account saved successfully.");
 					stage.setScene(homeScene);
 				}
 

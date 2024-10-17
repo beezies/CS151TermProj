@@ -1,5 +1,8 @@
 package FinanceUI;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.time.LocalDate;
 
 import javafx.application.Application;
@@ -19,7 +22,8 @@ public class FinanceApp extends Application{
 	Scene homeScene;
 	Scene newAccScene;
 	LocalDate date = LocalDate.now();
-	
+	private static final String FILE_PATH = "accounts.csv"; // Path for storing data
+
 	@Override
     public void start(Stage stage) {
 		
@@ -81,9 +85,34 @@ public class FinanceApp extends Application{
 		pane.getChildren().add(fieldPane);
 		pane.getChildren().add(btnPane);
 		
-		addBtn.setOnAction(e -> stage.setScene(homeScene));
+		addBtn.setOnAction(e ->{
+				String accountName = nameTF.getText();
+				LocalDate openingDate = dp.getValue();
+				String balanceStr = balanceTF.getText();
+				saveAccountData(accountName, openingDate, balanceStr);
+
+				stage.setScene(homeScene);
+		});
+
 		cancelBtn.setOnAction(e -> stage.setScene(homeScene));
 		return new Scene(pane, 450, 450);
+	}
+
+	/**
+	 * Saves new account data to flat file.
+	 *
+	 * @param accountName
+	 * @param openingDate
+	 * @param balanceStr
+	 */
+	private void saveAccountData(String accountName, LocalDate openingDate, String balanceStr) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
+			String line = accountName + "," + openingDate + "," + balanceStr;
+			writer.write(line);
+			writer.newLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
     public static void main(String[] args) {

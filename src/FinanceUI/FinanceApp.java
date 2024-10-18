@@ -25,7 +25,8 @@ public class FinanceApp extends Application{
 	Scene homeScene;
 	Scene newAccScene;
 	LocalDate date = LocalDate.now();
-	private static final String FILE_PATH = "accounts.csv";
+	private static final String ACCOUNTS_FILE_PATH = "accounts.csv";
+	private static final String CSS_FILE_PATH = "financeStyle.css";
 
 	@Override
     public void start(Stage stage) {
@@ -48,9 +49,10 @@ public class FinanceApp extends Application{
 		BorderPane pane = new BorderPane();
 		HBox top = new HBox();
 		VBox center = new VBox();
+		VBox left = new VBox();
+		VBox right = new VBox();
 		
 		Label title = new Label("Money Money Money");
-		title.setPadding(new Insets(50, 100, 50, 230));
 		
 		Label accsLbl = new Label("Accounts");
 		Button newAccBtn = new Button("Add New Account");
@@ -59,6 +61,8 @@ public class FinanceApp extends Application{
 		
 		top.getChildren().add(title);
 		pane.setTop(top);
+		pane.setRight(right);
+		pane.setLeft(left);
 		center.getChildren().add(accsLbl);
 		center.getChildren().add(newAccBtn);
 		center.getChildren().add(transLbl);
@@ -66,7 +70,9 @@ public class FinanceApp extends Application{
 		pane.setCenter(center);
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
-		return new Scene(pane, 600, 450);
+		homeScene = new Scene(pane, 600, 450);
+		homeScene.getStylesheets().add(CSS_FILE_PATH);
+		return homeScene;
 	}
 	
 	/**
@@ -77,11 +83,11 @@ public class FinanceApp extends Application{
 	 */
 	public Scene getNewAccScene(Stage stage) {
 		VBox pane = new VBox();
+		HBox titlePane = new HBox();
 		VBox fieldPane = new VBox();
 		HBox btnPane = new HBox();
 		
-		Label lbl = new Label("To be implemented: new account page \n(Account name,"
-				+ " \ncreation date, \nstarting balance)");
+		Label lbl = new Label("Define New Account");
 		TextField nameTF = new TextField();
 		nameTF.setPromptText("Enter Account Name");
 		DatePicker dp = new DatePicker(date);
@@ -91,12 +97,13 @@ public class FinanceApp extends Application{
 		Button addBtn = new Button("Add Account");
 		Button cancelBtn = new Button("Cancel");
 		
-		fieldPane.getChildren().add(lbl);
+		titlePane.getChildren().add(lbl);
 		fieldPane.getChildren().add(nameTF);
 		fieldPane.getChildren().add(dp);
 		fieldPane.getChildren().add(balanceTF);
 		btnPane.getChildren().add(addBtn);
 		btnPane.getChildren().add(cancelBtn);
+		pane.getChildren().add(titlePane);
 		pane.getChildren().add(fieldPane);
 		pane.getChildren().add(btnPane);
 		
@@ -113,18 +120,18 @@ public class FinanceApp extends Application{
 				} else {
 					saveAccountData(accountName, openingDate, balanceStr);
 					showAlert("Valid New Account Submission", "New account saved successfully.");
+					nameTF.clear();
+					dp.setValue(LocalDate.now());
+					balanceTF.clear();
 					stage.setScene(homeScene);
 				}
-
-				nameTF.clear();
-				dp.setValue(LocalDate.now());
-				balanceTF.clear();
-
-				stage.setScene(homeScene);
 		});
 
 		cancelBtn.setOnAction(e -> stage.setScene(homeScene));
-		return new Scene(pane, 450, 450);
+		
+		newAccScene = new Scene(pane, 600, 450);
+		newAccScene.getStylesheets().add(CSS_FILE_PATH);
+		return newAccScene;
 	}
 
 	/**
@@ -135,7 +142,7 @@ public class FinanceApp extends Application{
 	 * @param balanceStr
 	 */
 	private void saveAccountData(String accountName, LocalDate openingDate, String balanceStr) {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(ACCOUNTS_FILE_PATH, true))) {
 			String line = accountName + "," + openingDate + "," + balanceStr;
 			writer.write(line);
 			writer.newLine();
@@ -151,7 +158,7 @@ public class FinanceApp extends Application{
 	 * @return
 	 */
 	private boolean isDuplicateAccount(String accountName) {
-		try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(ACCOUNTS_FILE_PATH))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String[] parts = line.split(",");

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -89,18 +90,18 @@ public class FinanceApp extends Application{
 		
 		Label lbl = new Label("Define New Account");
 		TextField nameTF = new TextField();
-		nameTF.setPromptText("Enter Account Name");
 		DatePicker dp = new DatePicker(date);
 		TextField balanceTF = new TextField();
-		balanceTF.setPromptText("Enter Starting Balance");
+		Label accountLBL = new Label("Enter Account Name");
+		Label dateLBL = new Label("Enter Opening Date of Your Account");
+		Label balanceLBL = new Label("Enter Starting Balance");
 		
 		Button addBtn = new Button("Add Account");
 		Button cancelBtn = new Button("Cancel");
 		
+		
 		titlePane.getChildren().add(lbl);
-		fieldPane.getChildren().add(nameTF);
-		fieldPane.getChildren().add(dp);
-		fieldPane.getChildren().add(balanceTF);
+		fieldPane.getChildren().addAll(accountLBL, nameTF, dateLBL, dp, balanceLBL, balanceTF);
 		btnPane.getChildren().add(addBtn);
 		btnPane.getChildren().add(cancelBtn);
 		pane.getChildren().add(titlePane);

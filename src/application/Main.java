@@ -1,4 +1,4 @@
-package FinanceUI;
+package application;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -21,13 +19,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class FinanceApp extends Application{
+public class Main extends Application{
 	
 	Scene homeScene;
 	Scene newAccScene;
 	LocalDate date = LocalDate.now();
-	private static final String ACCOUNTS_FILE_PATH = "accounts.csv";
-	private static final String CSS_FILE_PATH = "financeStyle.css";
+	private static final String ACCOUNTS_FILE_PATH = "src/application/app_files/accounts.csv";
+	private static final String CSS_FILE_PATH = "application/app_files/financeStyle.css";
 
 	@Override
     public void start(Stage stage) {
@@ -112,7 +110,9 @@ public class FinanceApp extends Application{
 				String accountName = nameTF.getText();
 				LocalDate openingDate = dp.getValue();
 				String balanceStr = balanceTF.getText();
-				if (isDuplicateAccount(accountName)) {
+				if (accountName.equals("")) {
+					showAlert("Invalid Account Name", "Must enter a valid account name.");
+				} else if (isDuplicateAccount(accountName)) {
 					showAlert("Duplicate Account", "An account with this name already exists.");
 				} else if (openingDate.isAfter(LocalDate.now())) {
 					showAlert("Invalid Date", "Opening date cannot be in the future.");

@@ -23,3 +23,9 @@
 hs_err_pid*
 replay_pid*
 /bin/
+
+#Mac files
+.DS_Store
+
+#Locally updated data files
+/src/application/app_files/accounts.csv

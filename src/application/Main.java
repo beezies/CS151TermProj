@@ -132,7 +132,7 @@ public class Main extends Application{
 				String balanceStr = balanceTF.getText();
 				if (accountName.equals("")) {
 					showAlert("Invalid Account Name", "Must enter a valid account name.");
-				} else if (isDuplicateAccount(accountName)) {
+				} else if (FileIOHandler.isDuplicateAccount(accountName)) {
 					showAlert("Duplicate Account", "An account with this name already exists.");
 				} else if (openingDate.isAfter(LocalDate.now())) {
 					showAlert("Invalid Date", "Opening date cannot be in the future.");
@@ -155,26 +155,8 @@ public class Main extends Application{
 		return newAccScene;
 	}
 
-	/**
-	 * Checks that desired new account name is not a duplicate.
-	 *
-	 * @param accountName
-	 * @return
-	 */
-	private boolean isDuplicateAccount(String accountName) {
-		try (BufferedReader reader = new BufferedReader(new FileReader(ACCOUNTS_FILE_PATH))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				String[] parts = line.split(",");
-				if (parts[0].trim().equalsIgnoreCase(accountName)) {
-					return true;
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
+	
+	
 
 	/**
 	 * Checks that desired new account balance is a valid number.

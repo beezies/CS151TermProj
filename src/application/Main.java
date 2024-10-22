@@ -14,6 +14,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -53,23 +55,36 @@ public class Main extends Application{
 		
 		Label title = new Label("Money Money Money");
 		
+		Label blnk = new Label("        ");
+		Label blnk2 = new Label("        ");
+		Label blnk3 = new Label("        ");
+		
 		Label accsLbl = new Label("Accounts");
+		TableView accTable = new TableView();
+		TableColumn nameCol = new TableColumn("Name");
+        TableColumn dateCol = new TableColumn("Opening Date");
+        TableColumn balCol = new TableColumn("Balance");
 		Button newAccBtn = new Button("Add New Account");
 		Label transLbl = new Label("Upcoming Transactions");
 		Button transBtn = new Button("Schedule Transaction");
+		accTable.getColumns().addAll(nameCol, dateCol, balCol);
 		
 		top.getChildren().add(title);
+		right.getChildren().add(blnk);
+		left.getChildren().add(blnk2);
 		pane.setTop(top);
 		pane.setRight(right);
 		pane.setLeft(left);
 		center.getChildren().add(accsLbl);
+		center.getChildren().add(accTable);
 		center.getChildren().add(newAccBtn);
 		center.getChildren().add(transLbl);
 		center.getChildren().add(transBtn);
+		center.getChildren().add(blnk3);
 		pane.setCenter(center);
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
-		homeScene = new Scene(pane, 600, 450);
+		homeScene = new Scene(pane, 650, 600);
 		homeScene.getStylesheets().add(CSS_FILE_PATH);
 		return homeScene;
 	}

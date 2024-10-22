@@ -7,6 +7,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 
+import entities.FileIOHandler;
+import entities.User;
 import javafx.application.Application;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
@@ -25,13 +27,16 @@ public class Main extends Application{
 	
 	Scene homeScene;
 	Scene newAccScene;
+	
+	User user;
 	LocalDate date = LocalDate.now();
+	
 	private static final String ACCOUNTS_FILE_PATH = "src/application/app_files/accounts.csv";
 	private static final String CSS_FILE_PATH = "application/app_files/financeStyle.css";
 
 	@Override
     public void start(Stage stage) {
-		
+				
 		homeScene = getHomeScene(stage);
 		newAccScene = getNewAccScene(stage);
 		
@@ -134,7 +139,7 @@ public class Main extends Application{
 				} else if (!isDouble(balanceStr)) {
 					showAlert("Invalid Balance", "Starting balance must be a valid number.");
 				} else {
-					saveAccountData(accountName, openingDate, balanceStr);
+					FileIOHandler.writeAccount(accountName, openingDate, Double.valueOf(balanceStr));
 					showAlert("Valid New Account Submission", "New account saved successfully.");
 					nameTF.clear();
 					dp.setValue(LocalDate.now());
@@ -148,23 +153,6 @@ public class Main extends Application{
 		newAccScene = new Scene(pane, 600, 450);
 		newAccScene.getStylesheets().add(CSS_FILE_PATH);
 		return newAccScene;
-	}
-
-	/**
-	 * Saves new account data to flat file.
-	 *
-	 * @param accountName
-	 * @param openingDate
-	 * @param balanceStr
-	 */
-	private void saveAccountData(String accountName, LocalDate openingDate, String balanceStr) {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(ACCOUNTS_FILE_PATH, true))) {
-			String line = accountName + "," + openingDate + "," + balanceStr;
-			writer.write(line);
-			writer.newLine();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**

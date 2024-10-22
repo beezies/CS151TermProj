@@ -1,24 +1,36 @@
 package entities;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class User {
 	
-	private Account[] accounts;
-//	private Transaction[] transactions;
+	FileIOHandler io = new FileIOHandler();
 	
-	public User(Account[] accounts) {
-		this.setAccounts(accounts);
+	private ArrayList<Account> accounts;
+//	private ArrayList<Transactions> transactions;
+	
+	public User(ArrayList<Account> accounts) {
+		this.accounts = accounts;
 	}
 
-	public Account[] getAccounts() {
+	public ArrayList<Account> getAccounts() {
 		return accounts;
 	}
 
-	public void setAccounts(Account[] accounts) {
-		this.accounts = accounts;
+	public void addAccounts(ArrayList<Account> accounts) {
+		for (Account a : accounts) {
+			this.accounts.add(a);
+		}
+	}
+	
+	public void addAccount(Account account) {
+		this.accounts.add(account);
+	}
+	
+	public void addAccount(String name, LocalDate date, double balance) {
+		Account account = new Account(name, date, balance);
+		this.accounts.add(account);
 	}
 
 }

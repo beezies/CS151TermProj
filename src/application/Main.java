@@ -101,7 +101,7 @@ public class Main extends Application{
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
 		homeScene = new Scene(pane, 650, 600);
-//		homeScene.getStylesheets().add(CSS_FILE_PATH);
+		homeScene.getStylesheets().add(CSS_FILE_PATH);
 		return homeScene;
 	}
 	
@@ -155,14 +155,14 @@ public class Main extends Application{
 					nameTF.clear();
 					dp.setValue(LocalDate.now());
 					balanceTF.clear();
-					stage.setScene(homeScene);
+					stage.setScene(getHomeScene(stage));
 				}
 		});
 
 		cancelBtn.setOnAction(e -> stage.setScene(homeScene));
 		
 		newAccScene = new Scene(pane, 600, 450);
-//		newAccScene.getStylesheets().add(CSS_FILE_PATH);
+		newAccScene.getStylesheets().add(CSS_FILE_PATH);
 		return newAccScene;
 	}
 

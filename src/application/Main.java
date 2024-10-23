@@ -7,9 +7,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 
+import entities.Account;
 import entities.FileIOHandler;
 import entities.User;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -19,6 +21,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -31,7 +34,6 @@ public class Main extends Application{
 	User user;
 	LocalDate date = LocalDate.now();
 	
-	private static final String ACCOUNTS_FILE_PATH = "src/application/app_files/accounts.csv";
 	private static final String CSS_FILE_PATH = "application/app_files/financeStyle.css";
 
 	@Override
@@ -65,14 +67,23 @@ public class Main extends Application{
 		Label blnk3 = new Label("        ");
 		
 		Label accsLbl = new Label("Accounts");
-		TableView accTable = new TableView();
-		TableColumn nameCol = new TableColumn("Name");
-        TableColumn dateCol = new TableColumn("Opening Date");
-        TableColumn balCol = new TableColumn("Balance");
+		TableView<Account> accTable = new TableView<Account>();
+		TableColumn<Account, String> nameCol = new TableColumn<>("Name");
+		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        TableColumn<Account, LocalDate> dateCol = new TableColumn<>("Opening Date");
+        dateCol.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+        TableColumn<Account, Double> balCol = new TableColumn<>("Balance");
+        balCol.setCellValueFactory(new PropertyValueFactory<>("balance"));
+		accTable.getColumns().add(nameCol);
+		accTable.getColumns().add(dateCol);
+		accTable.getColumns().add(balCol);
+		for (Account a : FileIOHandler.loadAccounts()) {
+			accTable.getItems().add(a);
+			System.out.println(a.getName());
+		}
 		Button newAccBtn = new Button("Add New Account");
 		Label transLbl = new Label("Upcoming Transactions");
 		Button transBtn = new Button("Schedule Transaction");
-		accTable.getColumns().addAll(nameCol, dateCol, balCol);
 		
 		top.getChildren().add(title);
 		right.getChildren().add(blnk);
@@ -90,7 +101,7 @@ public class Main extends Application{
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
 		homeScene = new Scene(pane, 650, 600);
-		homeScene.getStylesheets().add(CSS_FILE_PATH);
+//		homeScene.getStylesheets().add(CSS_FILE_PATH);
 		return homeScene;
 	}
 	
@@ -151,11 +162,11 @@ public class Main extends Application{
 		cancelBtn.setOnAction(e -> stage.setScene(homeScene));
 		
 		newAccScene = new Scene(pane, 600, 450);
-		newAccScene.getStylesheets().add(CSS_FILE_PATH);
+//		newAccScene.getStylesheets().add(CSS_FILE_PATH);
 		return newAccScene;
 	}
 
-	
+
 	
 
 	/**

@@ -61,13 +61,21 @@ public class Main extends Application{
 		VBox right = new VBox();
 		
 		Label title = new Label("Money Money Money");
-		
 		Label blnk = new Label("        ");
 		Label blnk2 = new Label("        ");
 		Label blnk3 = new Label("        ");
 		
 		Label accsLbl = new Label("Accounts");
+		
 		TableView<Account> accTable = new TableView<Account>();
+		accTable.setColumnResizePolicy((param) -> {
+            double totalWidth = accTable.getWidth();
+            double equalWidth = totalWidth / 3;
+            for (TableColumn<?, ?> column : accTable.getColumns()) {
+                column.setPrefWidth(equalWidth);
+            }
+            return true;
+        });
 		TableColumn<Account, String> nameCol = new TableColumn<>("Name");
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
         TableColumn<Account, LocalDate> dateCol = new TableColumn<>("Opening Date");
@@ -81,6 +89,7 @@ public class Main extends Application{
 			accTable.getItems().add(a);
 			System.out.println(a.getName());
 		}
+		
 		Button newAccBtn = new Button("Add New Account");
 		Label transLbl = new Label("Upcoming Transactions");
 		Button transBtn = new Button("Schedule Transaction");

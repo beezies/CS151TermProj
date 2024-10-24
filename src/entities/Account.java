@@ -2,7 +2,7 @@ package entities;
 
 import java.time.LocalDate;
 
-public class Account {
+public class Account implements Comparable<Account>{
 	
 	private String name;
 	private LocalDate startDate;
@@ -36,6 +36,11 @@ public class Account {
 
 	public void setBalance(double balance) {
 		this.balance = balance;
+	}
+
+	@Override
+	public int compareTo(Account a) {
+		return a.getStartDate().compareTo(this.startDate);
 	}
 	
 

@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class FileIOHandler {
 	
@@ -32,6 +33,7 @@ public class FileIOHandler {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		Collections.sort(accounts);
 		return accounts;
 	}
 	

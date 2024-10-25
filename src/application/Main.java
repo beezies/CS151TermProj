@@ -176,31 +176,30 @@ public class Main extends Application{
 	        }
 	            return true;
 	        });
-			TableColumn<Account, String> nameCol = new TableColumn<>("Name");
-			nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-	        TableColumn<Account, LocalDate> dateCol = new TableColumn<>("Opening Date");
-	        dateCol.setCellValueFactory(new PropertyValueFactory<>("startDate"));
-	        TableColumn<Account, Double> balCol = new TableColumn<>("Balance");
-	        balCol.setCellValueFactory(new PropertyValueFactory<>("balance"));
-			accTable.getColumns().add(nameCol);
-			accTable.getColumns().add(dateCol);
-			accTable.getColumns().add(balCol);
-			for (Account a : FileIOHandler.loadAccounts()) {
-				accTable.getItems().add(a);
-				System.out.println(a.getName());
-			}
+		TableColumn<Account, String> nameCol = new TableColumn<>("Name");
+		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+	    TableColumn<Account, LocalDate> dateCol = new TableColumn<>("Opening Date");
+	    dateCol.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+	    TableColumn<Account, Double> balCol = new TableColumn<>("Balance");
+	    balCol.setCellValueFactory(new PropertyValueFactory<>("balance"));
+		accTable.getColumns().add(nameCol);
+		accTable.getColumns().add(dateCol);
+		accTable.getColumns().add(balCol);
+		for (Account a : FileIOHandler.loadAccounts()) {
+			accTable.getItems().add(a);
+			System.out.println(a.getName());
+		}
 			
-			top.getChildren().add(title);
-			center.getChildren().add(accTable);
-			bottom.getChildren().add(cancel);
-			pane.setTop(top);
-			pane.setCenter(center);
-			pane.setBottom(bottom);
-			cancel.setOnAction(e -> stage.setScene(homeScene));
-			accsScene = new Scene(pane, 650, 600);
-			accsScene.getStylesheets().add(CSS_FILE_PATH);
-			return accsScene;
-			
+		top.getChildren().add(title);
+		center.getChildren().add(accTable);
+		bottom.getChildren().add(cancel);
+		pane.setTop(top);
+		pane.setCenter(center);
+		pane.setBottom(bottom);
+		cancel.setOnAction(e -> stage.setScene(homeScene));
+		accsScene = new Scene(pane, 650, 600);
+		accsScene.getStylesheets().add(CSS_FILE_PATH);
+		return accsScene;	
 	}
 
 	

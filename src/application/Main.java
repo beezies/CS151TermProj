@@ -30,6 +30,7 @@ public class Main extends Application{
 	
 	Scene homeScene;
 	Scene newAccScene;
+	Scene accsScene;
 	
 	User user;
 	LocalDate date = LocalDate.now();
@@ -41,7 +42,7 @@ public class Main extends Application{
 				
 		homeScene = getHomeScene(stage);
 		newAccScene = getNewAccScene(stage);
-		
+		accsScene = getAccountsScene(stage);
         stage.setScene(homeScene);
         stage.show();
 		
@@ -63,34 +64,11 @@ public class Main extends Application{
 		Label title = new Label("Money Money Money");
 		Label blnk = new Label("        ");
 		Label blnk2 = new Label("        ");
-		Label blnk3 = new Label("        ");
+		Label blnk3 = new Label("        ");		
 		
-		Label accsLbl = new Label("Accounts");
-		
-		TableView<Account> accTable = new TableView<Account>();
-		accTable.setColumnResizePolicy((param) -> {
-            double totalWidth = accTable.getWidth();
-            double equalWidth = totalWidth / 3;
-            for (TableColumn<?, ?> column : accTable.getColumns()) {
-                column.setPrefWidth(equalWidth);
-            }
-            return true;
-        });
-		TableColumn<Account, String> nameCol = new TableColumn<>("Name");
-		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        TableColumn<Account, LocalDate> dateCol = new TableColumn<>("Opening Date");
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("startDate"));
-        TableColumn<Account, Double> balCol = new TableColumn<>("Balance");
-        balCol.setCellValueFactory(new PropertyValueFactory<>("balance"));
-		accTable.getColumns().add(nameCol);
-		accTable.getColumns().add(dateCol);
-		accTable.getColumns().add(balCol);
-		for (Account a : FileIOHandler.loadAccounts()) {
-			accTable.getItems().add(a);
-			System.out.println(a.getName());
-		}
 		
 		Button newAccBtn = new Button("Add New Account");
+		Button accsBtn = new Button("Accounts");
 		Label transLbl = new Label("Upcoming Transactions");
 		Button transBtn = new Button("Schedule Transaction");
 		
@@ -100,15 +78,16 @@ public class Main extends Application{
 		pane.setTop(top);
 		pane.setRight(right);
 		pane.setLeft(left);
-		center.getChildren().add(accsLbl);
-		center.getChildren().add(accTable);
+		center.getChildren().add(accsBtn);
 		center.getChildren().add(newAccBtn);
 		center.getChildren().add(transLbl);
 		center.getChildren().add(transBtn);
 		center.getChildren().add(blnk3);
+		center.setSpacing(20);
 		pane.setCenter(center);
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
+		accsBtn.setOnAction(e -> stage.setScene(accsScene));
 		homeScene = new Scene(pane, 650, 600);
 		homeScene.getStylesheets().add(CSS_FILE_PATH);
 		return homeScene;
@@ -118,7 +97,7 @@ public class Main extends Application{
 	 * Returns scene for new account page.
 	 * 
 	 * @param stage
-	 * @returnn New account scene
+	 * @return New account scene
 	 */
 	public Scene getNewAccScene(Stage stage) {
 		VBox pane = new VBox();
@@ -174,7 +153,55 @@ public class Main extends Application{
 		newAccScene.getStylesheets().add(CSS_FILE_PATH);
 		return newAccScene;
 	}
-
+	/**
+	 * Returns scene for accounts page.
+	 * 
+	 * @param stage
+	 * @returnn accounts scene
+	 */	
+	public Scene getAccountsScene(Stage stage){
+		BorderPane pane = new BorderPane();
+		HBox top = new HBox();
+		VBox center = new VBox();
+		VBox bottom = new VBox();
+		Label title = new Label("Accounts");
+		Button cancel = new Button("Cancel");
+			
+		TableView<Account> accTable = new TableView<Account>();
+		accTable.setColumnResizePolicy((param) -> {
+			double totalWidth = accTable.getWidth();
+	        double equalWidth = totalWidth / 3;
+	        for (TableColumn<?, ?> column : accTable.getColumns()) {
+	        	column.setPrefWidth(equalWidth);
+	        }
+	            return true;
+	        });
+			TableColumn<Account, String> nameCol = new TableColumn<>("Name");
+			nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+	        TableColumn<Account, LocalDate> dateCol = new TableColumn<>("Opening Date");
+	        dateCol.setCellValueFactory(new PropertyValueFactory<>("startDate"));
+	        TableColumn<Account, Double> balCol = new TableColumn<>("Balance");
+	        balCol.setCellValueFactory(new PropertyValueFactory<>("balance"));
+			accTable.getColumns().add(nameCol);
+			accTable.getColumns().add(dateCol);
+			accTable.getColumns().add(balCol);
+			for (Account a : FileIOHandler.loadAccounts()) {
+				accTable.getItems().add(a);
+				System.out.println(a.getName());
+			}
+			
+			top.getChildren().add(title);
+			center.getChildren().add(accTable);
+			bottom.getChildren().add(cancel);
+			pane.setTop(top);
+			pane.setCenter(center);
+			pane.setBottom(bottom);
+			cancel.setOnAction(e -> stage.setScene(homeScene));
+			accsScene = new Scene(pane, 650, 600);
+			accsScene.getStylesheets().add(CSS_FILE_PATH);
+			return accsScene;
+			
+	}
 
 	
 

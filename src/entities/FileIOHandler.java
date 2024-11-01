@@ -12,7 +12,7 @@ import java.util.Collections;
 public class FileIOHandler {
 	
 	private static final String ACCOUNTS_FILE_PATH = "src/application/app_files/accounts.csv";
-	
+	private static final String TRANSACTIONTYPES_FILE_PATH = "src/application/app_files/transactionTypes.csv";
 	/**
 	 * 
 	 * @return All accounts on file
@@ -94,10 +94,37 @@ public class FileIOHandler {
 		return false;
 	}
 	
-	public static void writeTransaction() {
-		
+	public static void writeTransType(TransactionType type) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(TRANSACTIONTYPES_FILE_PATH, true))) {
+			String line = type.getName();
+			writer.write(line);
+			writer.newLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-	
-	
+	public static void writeTransType(String name) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(TRANSACTIONTYPES_FILE_PATH, true))) {
+			String line = name;
+			writer.write(line);
+			writer.newLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public static boolean isDuplicateTransType(String typeName) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTIONTYPES_FILE_PATH))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split(",");
+				if (parts[0].trim().equalsIgnoreCase(typeName)) {
+					return true;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 }

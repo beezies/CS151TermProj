@@ -30,7 +30,7 @@ public class Main extends Application{
 	
 	Scene homeScene;
 	Scene newAccScene;
-	
+	Scene transTypeScene;
 	
 	User user;
 	LocalDate date = LocalDate.now();
@@ -42,6 +42,7 @@ public class Main extends Application{
 				
 		homeScene = getHomeScene(stage);
 		newAccScene = getNewAccScene(stage);
+		transTypeScene = getTransTypeScene(stage);
         stage.setScene(homeScene);
         stage.show();
 		
@@ -67,8 +68,8 @@ public class Main extends Application{
 		
 		Label accsLbl = new Label("Accounts");
 		Button newAccBtn = new Button("Add New Account");
-		Label transLbl = new Label("Upcoming Transactions");
-		Button transBtn = new Button("Schedule Transaction");
+		Label transLbl = new Label("Transactions");
+		Button transTypeBtn = new Button("Add new Transaction Type");
 		
 		TableView<Account> accTable = new TableView<Account>();
 		accTable.setColumnResizePolicy((param) -> {
@@ -103,16 +104,17 @@ public class Main extends Application{
 		center.getChildren().add(accTable);
 		center.getChildren().add(newAccBtn);
 		center.getChildren().add(transLbl);
-		center.getChildren().add(transBtn);
+		center.getChildren().add(transTypeBtn);
 		center.getChildren().add(blnk3);
 		pane.setCenter(center);
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
+		transTypeBtn.setOnAction(e -> stage.setScene(transTypeScene));
 		homeScene = new Scene(pane, 650, 600);
 		homeScene.getStylesheets().add(CSS_FILE_PATH);
 		return homeScene;
 	}
-	
+
 	/**
 	 * Returns scene for new account page.
 	 * 
@@ -173,7 +175,50 @@ public class Main extends Application{
 		newAccScene.getStylesheets().add(CSS_FILE_PATH);
 		return newAccScene;
 	}
+	
 	/**
+	 * Returns scene for new transaction type page.
+	 * 
+	 * @param stage
+	 * @return New transaction type scene
+	 */
+	public Scene getTransTypeScene(Stage stage){
+		VBox pane = new VBox();
+		HBox title = new HBox();
+		HBox buttonPane = new HBox();
+		
+		Label lbl = new Label("Define New Transaction Type");
+		TextField typeTF = new TextField();
+		Button typeBtn = new Button("add Transaction Type");
+		Button cancelBtn = new Button("Cancel");
+		
+		title.getChildren().add(lbl);
+		buttonPane.getChildren().addAll(typeBtn, cancelBtn);
+		pane.getChildren().addAll(title, typeTF, buttonPane);
+		pane.setSpacing(100);
+		
+		typeBtn.setOnAction(e ->{
+			String typeName = typeTF.getText();
+			if(typeName.equals(""))
+				showAlert("Invalid Transaction Type Name", "Must enter a valid transaction type name");
+			else if(FileIOHandler.isDuplicateTransType(typeName))
+				showAlert("Duplicate Transaction Type Name", "A transaction type with this name already exists");
+			else
+			{
+				FileIOHandler.writeTransType(typeName);
+				showAlert("Valid New Transaction Type Submission", "Transaction type saved successfully");
+				typeTF.clear();
+				stage.setScene(getHomeScene(stage));
+			}
+		});
+		
+		cancelBtn.setOnAction(e -> stage.setScene(homeScene));
+		
+		transTypeScene = new Scene(pane, 600, 450);
+		transTypeScene.getStylesheets().add(CSS_FILE_PATH);
+		return transTypeScene;
+	}
+	
 
 	/**
 	 * Checks that desired new account balance is a valid number.

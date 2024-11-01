@@ -1,17 +1,11 @@
 package application;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.time.LocalDate;
 
 import entities.Account;
 import entities.FileIOHandler;
 import entities.User;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.scene.Scene;

@@ -13,6 +13,8 @@ public class FileIOHandler {
 	
 	private static final String ACCOUNTS_FILE_PATH = "src/application/app_files/accounts.csv";
 	private static final String TRANSACTIONTYPES_FILE_PATH = "src/application/app_files/transactionTypes.csv";
+	private static final String TRANSACTIONS = "src/application/app_files/transactions.csv";
+	
 	/**
 	 * 
 	 * @return All accounts on file
@@ -94,6 +96,21 @@ public class FileIOHandler {
 		return false;
 	}
 	
+	public static ArrayList<TransactionType> loadTransTypes() {
+		ArrayList<TransactionType> transTypes = new ArrayList<TransactionType>();
+		
+		try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTIONTYPES_FILE_PATH))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				TransactionType transType = new TransactionType(line);
+				transTypes.add(transType);
+			} 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return transTypes;
+	}
+	
 	public static void writeTransType(TransactionType type) {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(TRANSACTIONTYPES_FILE_PATH, true))) {
 			String line = type.getName();
@@ -126,5 +143,13 @@ public class FileIOHandler {
 		}
 		return false;
 	}
-
+	public static void writeTransaction(Account account, TransactionType type, LocalDate date, String desc, Double amount) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(TRANSACTIONS, true))) {
+			String line = account.toString() + "," + type.toString() + "," + date + "," + desc + "," + amount;
+			writer.write(line);
+			writer.newLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

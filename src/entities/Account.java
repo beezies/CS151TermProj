@@ -42,6 +42,10 @@ public class Account implements Comparable<Account>{
 	public int compareTo(Account a) {
 		return a.getStartDate().compareTo(this.startDate);
 	}
+	@Override
+	public String toString() {
+		return name;
+	}
 	
 
 }

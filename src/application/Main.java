@@ -47,7 +47,7 @@ public class Main extends Application{
     }
 
 	/**
-	 * Returns scene for home page.
+	 * Returns scene for home page (useful for reloading home scene after data changes)
 	 * 
 	 * @param stage
 	 * @return Home scene
@@ -108,8 +108,9 @@ public class Main extends Application{
 		pane.setCenter(center);
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
-		transBtn.setOnAction(e -> stage.setScene(transScene));
-		transTypeBtn.setOnAction(e -> stage.setScene(transTypeScene));
+		transBtn.setOnAction(e -> stage.setScene(getTransScene(stage)));
+		transTypeBtn.setOnAction(e -> stage.setScene(getTransTypeScene(stage)));
+		
 		homeScene = new Scene(pane, 650, 600);
 		homeScene.getStylesheets().add(CSS_FILE_PATH);
 		return homeScene;
@@ -148,7 +149,7 @@ public class Main extends Application{
 		pane.getChildren().add(btnPane);
 		
 		addBtn.setOnAction(e ->{
-				String accountName = nameTF.getText();
+				String accountName = nameTF.getText().trim();
 				LocalDate openingDate = dp.getValue();
 				String balanceStr = balanceTF.getText();
 				if (accountName.equals("")) {
@@ -233,9 +234,9 @@ public class Main extends Application{
 		DatePicker dp = new DatePicker(date);
 		Label descLbl = new Label("Short Description of Transaction");
 		TextField descTF = new TextField();
-		Label payLbl = new Label("If you paid money enter the amount you paid");
+		Label payLbl = new Label("Payment Amount");
 		TextField payTF = new TextField();
-		Label depLbl = new Label("If you deposited money enter the amount you deposited");
+		Label depLbl = new Label("Deposit Amount");
 		TextField depTF = new TextField();
 		Button transBtn = new Button("add Transaction");
 		Button cancelBtn = new Button("Cancel");
@@ -282,9 +283,10 @@ public class Main extends Application{
 				descTF.clear();
 				payTF.clear();
 				depTF.clear();
-				stage.setScene(homeScene);
+				stage.setScene(getHomeScene(stage));
 			}	
 		});
+		
 		cancelBtn.setOnAction(e -> stage.setScene(homeScene));
 		
 		transScene = new Scene(pane, 600, 600);
@@ -307,7 +309,7 @@ public class Main extends Application{
 	}
 
 	/**
-	 * Prompts user with reason for failed submission of new account.
+	 * Prompts user with reason for failed submission of new account/transaction.
 	 *
 	 * @param title
 	 * @param message

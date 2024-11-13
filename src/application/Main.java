@@ -251,6 +251,8 @@ public class Main extends Application{
 			String desc = descTF.getText();
 			String payment = payTF.getText();
 			String deposit = depTF.getText();
+			boolean payIsDouble = tryParseDouble(payment);
+			boolean depIsDouble = tryParseDouble(deposit);
 			if(account == null)
 				showAlert("Empty Account", "Must choose an account");
 			else if(type == null)
@@ -259,14 +261,14 @@ public class Main extends Application{
 				showAlert("Invalid Date", "Transaction date cannot be in the future");
 			else if(desc == "")
 				showAlert("Invalid Description", "Must enter a description");
-			else if(tryParse(payment) == false && tryParse(deposit) == false)
+			else if(!payIsDouble && !depIsDouble)
 				showAlert("Invalid Payment/Deposit", "Must enter a valid payment or deposit amount");
-			else if(tryParse(payment) == true && tryParse(deposit) == true)
+			else if(payIsDouble && depIsDouble)
 				showAlert("Invalid Payment and Deposit", "Cannot enter both a payment and a deposit amount");
 			else
 			{
 				Double amount;
-				if(tryParse(payment) == true)
+				if (payIsDouble)
 					amount = -Double.parseDouble(payment);
 				else
 					amount = Double.parseDouble(deposit);
@@ -315,7 +317,7 @@ public class Main extends Application{
 		alert.showAndWait();
 	}
 	
-	private boolean tryParse(String text) {
+	private boolean tryParseDouble(String text) {
 		try {
 			Double.parseDouble(text);
 		} catch(NumberFormatException e){

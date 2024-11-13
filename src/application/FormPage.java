@@ -21,5 +21,4 @@ public interface FormPage {
 		alert.setContentText(message);
 		alert.showAndWait();
 	}
-
 }

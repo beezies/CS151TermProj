@@ -13,7 +13,7 @@ public class FileIOHandler {
 	
 	private static final String ACCOUNTS_FILE_PATH = "src/data_files/accounts.csv";
 	private static final String TRANSACTIONTYPES_FILE_PATH = "src/data_files/transactionTypes.csv";
-	private static final String TRANSACTIONS = "src/data_files/transactions.csv";
+	private static final String TRANSACTIONS_FILE_PATH = "src/data_files/transactions.csv";
 	
 	/**
 	 * 
@@ -144,12 +144,44 @@ public class FileIOHandler {
 		return false;
 	}
 	public static void writeTransaction(Account account, TransactionType type, LocalDate date, String desc, Double amount) {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(TRANSACTIONS, true))) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(TRANSACTIONS_FILE_PATH, true))) {
 			String line = account.toString() + "," + type.toString() + "," + date + "," + desc + "," + amount;
 			writer.write(line);
 			writer.newLine();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static ArrayList<Transaction> loadTransactions() {
+		ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+		ArrayList<Account> accs = loadAccounts();
+		ArrayList<TransactionType> types = loadTransTypes();
+		
+		try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTIONS_FILE_PATH))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split(",");
+				String accName = parts[0].trim();
+				Account acc = new Account("", null, 0);
+				for (Account a:accs) {
+					if (a.getName().equals(accName)) acc = a;
+				}
+				String typeString = parts[1].trim();
+				TransactionType type = new TransactionType("");
+				for (TransactionType t:types) {
+					if (t.getName().equals(typeString)) type = t;
+				}
+				LocalDate date = LocalDate.parse(parts[2].trim());
+				String desc = parts[3].trim();
+				double amt = Double.valueOf(parts[4].trim());
+				Transaction t = new Transaction(acc, type, date, desc, amt);
+				transactions.add(t);
+			} 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Collections.sort(transactions);
+		return transactions;
 	}
 }

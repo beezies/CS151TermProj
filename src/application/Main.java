@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import entities.Account;
 import entities.FileIOHandler;
+import entities.Transaction;
 import entities.TransactionType;
 import entities.User;
 import javafx.application.Application;
@@ -26,7 +27,8 @@ public class Main extends Application{
 	
 	Scene homeScene;
 	Scene newAccScene;
-	Scene transTypeScene;
+	Scene newTransTypeScene;
+	Scene newTransScene;
 	Scene transScene;
 	
 	User user;
@@ -39,7 +41,8 @@ public class Main extends Application{
 				
 		homeScene = getHomeScene(stage);
 		newAccScene = getNewAccScene(stage);
-		transTypeScene = getTransTypeScene(stage);
+		newTransTypeScene = getNewTransTypeScene(stage);
+		newTransScene = getNewTransScene(stage);
 		transScene = getTransScene(stage);
         stage.setScene(homeScene);
         stage.show();
@@ -63,11 +66,14 @@ public class Main extends Application{
 		Label title = new Label("Money Money Money");
 		Label blnk = new Label("        ");
 		Label blnk2 = new Label("        ");
-		Label blnk3 = new Label("        ");		
+		Label blnk3 = new Label("        ");
 		
 		Button newAccBtn = new Button("Add New Account");
-		Button transBtn = new Button("Add Transaction");
-		Button transTypeBtn = new Button("Add new Transaction Type");
+		Button transBtn = new Button("View Transactions");
+		Button schedTransBtn = new Button("View Scheduled Transactions");
+		Button newTransBtn = new Button("Add Transaction");
+		Button newSchedTransBtn = new Button("Add Scheduled Transaction");
+		Button newTransTypeBtn = new Button("Add new Transaction Type");
 		
 		TableView<Account> accTable = new TableView<Account>();
 		TableColumn<Account, String> label = new TableColumn<>("Accounts");
@@ -95,16 +101,20 @@ public class Main extends Application{
 		center.getChildren().add(accTable);
 		center.getChildren().add(newAccBtn);
 		center.getChildren().add(transBtn);
-		center.getChildren().add(transTypeBtn);
+		center.getChildren().add(schedTransBtn);
+		center.getChildren().add(newTransBtn);
+		center.getChildren().add(newSchedTransBtn);
+		center.getChildren().add(newTransTypeBtn);
 		center.getChildren().add(blnk3);
 		center.setSpacing(10);
 		pane.setCenter(center);
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
 		transBtn.setOnAction(e -> stage.setScene(getTransScene(stage)));
-		transTypeBtn.setOnAction(e -> stage.setScene(getTransTypeScene(stage)));
+		newTransBtn.setOnAction(e -> stage.setScene(getNewTransScene(stage)));
+		newTransTypeBtn.setOnAction(e -> stage.setScene(newTransTypeScene));
 		
-		homeScene = new Scene(pane, 650, 600);
+		homeScene = new Scene(pane, 800, 700);
 		homeScene.getStylesheets().add(CSS_FILE_PATH);
 		return homeScene;
 	}
@@ -176,7 +186,7 @@ public class Main extends Application{
 	 * @param stage
 	 * @return New transaction type scene
 	 */
-	public Scene getTransTypeScene(Stage stage){
+	public Scene getNewTransTypeScene(Stage stage){
 		VBox pane = new VBox();
 		HBox title = new HBox();
 		HBox buttonPane = new HBox();
@@ -208,12 +218,12 @@ public class Main extends Application{
 		
 		cancelBtn.setOnAction(e -> stage.setScene(homeScene));
 		
-		transTypeScene = new Scene(pane, 600, 450);
-		transTypeScene.getStylesheets().add(CSS_FILE_PATH);
-		return transTypeScene;
+		newTransTypeScene = new Scene(pane, 600, 450);
+		newTransTypeScene.getStylesheets().add(CSS_FILE_PATH);
+		return newTransTypeScene;
 	}
 	
-	private Scene getTransScene(Stage stage) {
+	private Scene getNewTransScene(Stage stage) {
 		VBox pane = new VBox();
 		HBox title = new HBox();
 		HBox buttonPane = new HBox();
@@ -251,8 +261,8 @@ public class Main extends Application{
 			String desc = descTF.getText();
 			String payment = payTF.getText();
 			String deposit = depTF.getText();
-			boolean payIsDouble = tryParseDouble(payment);
-			boolean depIsDouble = tryParseDouble(deposit);
+			boolean payIsDouble = isDouble(payment);
+			boolean depIsDouble = isDouble(deposit);
 			if(account == null)
 				showAlert("Empty Account", "Must choose an account");
 			else if(type == null)
@@ -284,7 +294,58 @@ public class Main extends Application{
 		
 		cancelBtn.setOnAction(e -> stage.setScene(homeScene));
 		
-		transScene = new Scene(pane, 600, 600);
+		newTransScene = new Scene(pane, 600, 600);
+		newTransScene.getStylesheets().add(CSS_FILE_PATH);
+		return newTransScene;
+	}
+	
+	public Scene getTransScene(Stage stage) {
+		BorderPane pane = new BorderPane();
+		HBox top = new HBox();
+		VBox center = new VBox();
+		VBox left = new VBox();
+		VBox right = new VBox();
+		
+		Label title = new Label("Transactions");
+		Label blnk = new Label("        ");
+		Label blnk2 = new Label("        ");
+		Label blnk3 = new Label("        ");		
+		
+		TableView<Transaction> transTable = new TableView<Transaction>();
+		TableColumn<Transaction, Account> accCol = new TableColumn<>("Account");
+		accCol.setCellValueFactory(new PropertyValueFactory<>("account"));
+	    TableColumn<Transaction, TransactionType> typeCol = new TableColumn<>("Type");
+	    typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
+	    TableColumn<Transaction, Double> amtCol = new TableColumn<>("Amount");
+	    amtCol.setCellValueFactory(new PropertyValueFactory<>("amount"));
+	    TableColumn<Transaction, LocalDate> dateCol = new TableColumn<>("Date");
+	    dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+	    TableColumn<Transaction, String> descCol = new TableColumn<>("Description");
+	    descCol.setCellValueFactory(new PropertyValueFactory<>("desc"));
+	    
+	    transTable.getColumns().addAll(accCol, typeCol, amtCol, dateCol, descCol);
+	    transTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	    
+		for (Transaction a : FileIOHandler.loadTransactions()) {
+			transTable.getItems().add(a);
+		}
+		
+		Button backBtn = new Button("Back");
+		top.getChildren().add(title);
+		right.getChildren().add(blnk);
+		left.getChildren().add(blnk2);
+		pane.setTop(top);
+		pane.setRight(right);
+		pane.setLeft(left);
+		center.getChildren().add(transTable);
+		center.getChildren().add(backBtn);
+		center.getChildren().add(blnk3);
+		center.setSpacing(10);
+		pane.setCenter(center);
+		
+		backBtn.setOnAction(e -> stage.setScene(homeScene));
+		
+		transScene = new Scene(pane, 650, 600);
 		transScene.getStylesheets().add(CSS_FILE_PATH);
 		return transScene;
 	}
@@ -316,15 +377,7 @@ public class Main extends Application{
 		alert.setContentText(message);
 		alert.showAndWait();
 	}
-	
-	private boolean tryParseDouble(String text) {
-		try {
-			Double.parseDouble(text);
-		} catch(NumberFormatException e){
-			return false;
-		}
-		return true;
-	}
+
     public static void main(String[] args) {
         launch(args);
     }

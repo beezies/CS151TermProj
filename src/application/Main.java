@@ -32,7 +32,7 @@ public class Main extends Application{
 	User user;
 	LocalDate date = LocalDate.now();
 	
-	private static final String CSS_FILE_PATH = "application/app_files/financeStyle.css";
+	private static final String CSS_FILE_PATH = "application/style/financeStyle.css";
 
 	@Override
     public void start(Stage stage) {

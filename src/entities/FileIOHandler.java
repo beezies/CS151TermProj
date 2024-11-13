@@ -11,9 +11,9 @@ import java.util.Collections;
 
 public class FileIOHandler {
 	
-	private static final String ACCOUNTS_FILE_PATH = "src/application/app_files/accounts.csv";
-	private static final String TRANSACTIONTYPES_FILE_PATH = "src/application/app_files/transactionTypes.csv";
-	private static final String TRANSACTIONS = "src/application/app_files/transactions.csv";
+	private static final String ACCOUNTS_FILE_PATH = "src/data_files/accounts.csv";
+	private static final String TRANSACTIONTYPES_FILE_PATH = "src/data_files/transactionTypes.csv";
+	private static final String TRANSACTIONS = "src/data_files/transactions.csv";
 	
 	/**
 	 * 

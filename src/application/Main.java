@@ -52,6 +52,7 @@ public class Main extends Application{
 	 * @param stage
 	 * @return Home scene
 	 */
+	@SuppressWarnings("unchecked")
 	public Scene getHomeScene(Stage stage) {
 		BorderPane pane = new BorderPane();
 		HBox top = new HBox();
@@ -64,29 +65,22 @@ public class Main extends Application{
 		Label blnk2 = new Label("        ");
 		Label blnk3 = new Label("        ");		
 		
-		Label accsLbl = new Label("Accounts");
 		Button newAccBtn = new Button("Add New Account");
 		Button transBtn = new Button("Add Transaction");
 		Button transTypeBtn = new Button("Add new Transaction Type");
 		
 		TableView<Account> accTable = new TableView<Account>();
-		accTable.setColumnResizePolicy((param) -> {
-			double totalWidth = accTable.getWidth();
-	        double equalWidth = totalWidth / 3;
-	        for (TableColumn<?, ?> column : accTable.getColumns()) {
-	        	column.setPrefWidth(equalWidth);
-	        }
-	            return true;
-	        });
+		TableColumn<Account, String> label = new TableColumn<>("Accounts");
 		TableColumn<Account, String> nameCol = new TableColumn<>("Name");
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 	    TableColumn<Account, LocalDate> dateCol = new TableColumn<>("Opening Date");
 	    dateCol.setCellValueFactory(new PropertyValueFactory<>("startDate"));
 	    TableColumn<Account, Double> balCol = new TableColumn<>("Balance");
 	    balCol.setCellValueFactory(new PropertyValueFactory<>("balance"));
-		accTable.getColumns().add(nameCol);
-		accTable.getColumns().add(dateCol);
-		accTable.getColumns().add(balCol);
+	    label.getColumns().addAll(nameCol, dateCol, balCol);
+	    accTable.getColumns().add(label);
+	    accTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	    
 		for (Account a : FileIOHandler.loadAccounts()) {
 			accTable.getItems().add(a);
 			System.out.println(a.getName());
@@ -98,7 +92,6 @@ public class Main extends Application{
 		pane.setTop(top);
 		pane.setRight(right);
 		pane.setLeft(left);
-		center.getChildren().add(accsLbl);
 		center.getChildren().add(accTable);
 		center.getChildren().add(newAccBtn);
 		center.getChildren().add(transBtn);

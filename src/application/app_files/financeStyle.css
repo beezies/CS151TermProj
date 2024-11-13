@@ -6,6 +6,10 @@
     -fx-background: rgb(113, 199, 245);
 }
 
+.table-view {
+	-fx-font-family: "Arial";
+}
+
 HBox {
     -fx-alignment: center ;
     -fx-padding: 40 ;
@@ -16,4 +20,5 @@ HBox {
 VBox {
 	-fx-alignment: center ;
 }
+
 

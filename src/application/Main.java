@@ -1,13 +1,14 @@
 package application;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import entities.Account;
 import entities.FileIOHandler;
 import entities.Transaction;
 import entities.TransactionType;
 import entities.User;
+import entities.ScheduledTransaction;
+
 import javafx.application.Application;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
@@ -117,6 +118,7 @@ public class Main extends Application{
 		newTransBtn.setOnAction(e -> stage.setScene(getNewTransScene(stage)));
 		newTransTypeBtn.setOnAction(e -> stage.setScene(newTransTypeScene));
 		newSchedTransBtn.setOnAction(e -> stage.setScene(getNewSchedTransScene(stage)));
+		schedTransBtn.setOnAction(e -> stage.setScene(getSchedTransScene(stage)));
 		
 		homeScene = new Scene(pane, 800, 700);
 		homeScene.getStylesheets().add(CSS_FILE_PATH);
@@ -227,6 +229,12 @@ public class Main extends Application{
 		return newTransTypeScene;
 	}
 	
+	/**
+	 * Returns scene to add a new transaction.
+	 * 
+	 * @param stage
+	 * @return
+	 */
 	private Scene getNewTransScene(Stage stage) {
 		VBox pane = new VBox();
 		HBox title = new HBox();
@@ -304,6 +312,12 @@ public class Main extends Application{
 		return newTransScene;
 	}
 	
+	/**
+	 * Returns scene to show all transactions.
+	 * 
+	 * @param stage
+	 * @return
+	 */
 	public Scene getTransScene(Stage stage) {
 		BorderPane pane = new BorderPane();
 		HBox top = new HBox();
@@ -354,6 +368,13 @@ public class Main extends Application{
 		transScene.getStylesheets().add(CSS_FILE_PATH);
 		return transScene;
 	}
+	
+	/**
+	 * Scene for adding a scheduled transaction.
+	 * 
+	 * @param stage
+	 * @return
+	 */
 	private Scene getNewSchedTransScene(Stage stage) {
 		VBox pane = new VBox();
 		HBox title = new HBox();
@@ -372,7 +393,7 @@ public class Main extends Application{
 		TextField dayTF = new TextField();
 		Label payLbl = new Label("Payment Amount");
 		TextField payTF = new TextField();
-		Button schedTransBtn = new Button("add Scheduled Transaction");
+		Button schedTransBtn = new Button("Add Scheduled Transaction");
 		Button cancelBtn = new Button("Cancel");
 		
 		accounts.getItems().addAll(FileIOHandler.loadAccounts());
@@ -426,8 +447,70 @@ public class Main extends Application{
 		newSchedTransScene.getStylesheets().add(CSS_FILE_PATH);
 		return newSchedTransScene;
 	}
+	
+	@SuppressWarnings("unchecked")
+	/**
+	 * Scene for showing all scheduled transactions.
+	 * 
+	 * @param stage
+	 * @return
+	 */
+	private Scene getSchedTransScene(Stage stage) {
+		BorderPane pane = new BorderPane();
+		HBox top = new HBox();
+		VBox center = new VBox();
+		VBox left = new VBox();
+		VBox right = new VBox();
+		
+		Label title = new Label("Scheduled Transactions");
+		Label blnk = new Label("        ");
+		Label blnk2 = new Label("        ");
+		Label blnk3 = new Label("        ");		
+		
+		TableView<ScheduledTransaction> transTable = new TableView<ScheduledTransaction>();
+		TableColumn<ScheduledTransaction, String> nameCol = new TableColumn<>("Name");
+		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+		TableColumn<ScheduledTransaction, Account> accCol = new TableColumn<>("Account");
+		accCol.setCellValueFactory(new PropertyValueFactory<>("account"));
+	    TableColumn<ScheduledTransaction, TransactionType> typeCol = new TableColumn<>("Type");
+	    typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
+	    TableColumn<ScheduledTransaction, Double> amtCol = new TableColumn<>("Amount");
+	    amtCol.setCellValueFactory(new PropertyValueFactory<>("amount"));
+	    TableColumn<ScheduledTransaction, Integer> dateCol = new TableColumn<>("Day");
+	    dateCol.setCellValueFactory(new PropertyValueFactory<>("day"));
+	    TableColumn<ScheduledTransaction, String> freqCol = new TableColumn<>("Frequency");
+	    freqCol.setCellValueFactory(new PropertyValueFactory<>("frequency"));
+	    
+	    transTable.getColumns().addAll(nameCol, accCol, typeCol, amtCol, dateCol, freqCol);
+	    transTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	    
+		for (ScheduledTransaction a : FileIOHandler.loadScheduledTransactions()) {
+			transTable.getItems().add(a);
+		}
+		
+		Button backBtn = new Button("Back");
+		top.getChildren().add(title);
+		right.getChildren().add(blnk);
+		left.getChildren().add(blnk2);
+		pane.setTop(top);
+		pane.setRight(right);
+		pane.setLeft(left);
+		center.getChildren().add(transTable);
+		center.getChildren().add(backBtn);
+		center.getChildren().add(blnk3);
+		center.setSpacing(10);
+		pane.setCenter(center);
+		
+		backBtn.setOnAction(e -> stage.setScene(homeScene));
+		
+		transScene = new Scene(pane, 800, 600);
+		transScene.getStylesheets().add(CSS_FILE_PATH);
+		return transScene;
+	}
+	
 	/**
 	 * Checks that desired new account balance is a valid number.
+	 * 
 	 * @param str
 	 * @return
 	 */

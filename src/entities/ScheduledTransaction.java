@@ -1,6 +1,5 @@
 package entities;
 
-import java.time.LocalDate;
 
 public class ScheduledTransaction implements Comparable<ScheduledTransaction> {
 

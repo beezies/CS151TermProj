@@ -1,6 +1,7 @@
 package application;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import entities.Account;
 import entities.FileIOHandler;
@@ -30,6 +31,7 @@ public class Main extends Application{
 	Scene newTransTypeScene;
 	Scene newTransScene;
 	Scene transScene;
+	Scene newSchedTransScene;
 	
 	User user;
 	LocalDate date = LocalDate.now();
@@ -44,6 +46,7 @@ public class Main extends Application{
 		newTransTypeScene = getNewTransTypeScene(stage);
 		newTransScene = getNewTransScene(stage);
 		transScene = getTransScene(stage);
+		Scene newSchedTransScene = getNewSchedTransScene(stage);
         stage.setScene(homeScene);
         stage.show();
 		
@@ -113,6 +116,7 @@ public class Main extends Application{
 		transBtn.setOnAction(e -> stage.setScene(getTransScene(stage)));
 		newTransBtn.setOnAction(e -> stage.setScene(getNewTransScene(stage)));
 		newTransTypeBtn.setOnAction(e -> stage.setScene(newTransTypeScene));
+		newSchedTransBtn.setOnAction(e -> stage.setScene(getNewSchedTransScene(stage)));
 		
 		homeScene = new Scene(pane, 800, 700);
 		homeScene.getStylesheets().add(CSS_FILE_PATH);
@@ -249,6 +253,7 @@ public class Main extends Application{
 		types.getItems().addAll(FileIOHandler.loadTransTypes());
 		types.setValue(types.getItems().getFirst());
 		
+		
 		title.getChildren().add(titleLbl);
 		buttonPane.getChildren().addAll(transBtn, cancelBtn);
 		pane.getChildren().addAll(title, chooseAcc, accounts, chooseType, types, chooseDate, dp, descLbl, descTF,
@@ -349,7 +354,78 @@ public class Main extends Application{
 		transScene.getStylesheets().add(CSS_FILE_PATH);
 		return transScene;
 	}
-
+	private Scene getNewSchedTransScene(Stage stage) {
+		VBox pane = new VBox();
+		HBox title = new HBox();
+		HBox buttonPane = new HBox();
+		
+		Label titleLbl = new Label("Schedule Transaction");
+		Label chooseAcc = new Label("Choose account that will make this transaction");
+		ChoiceBox<Account> accounts = new ChoiceBox<Account>();
+		Label chooseType = new Label("Choose transaction type");
+		ChoiceBox<TransactionType> types = new ChoiceBox<TransactionType>();
+		Label chooseFreq = new Label("Choose Frequency of Transaction");
+		ChoiceBox<String> frequency = new ChoiceBox<String>();
+		Label chooseName = new Label("Name Transaction");
+		TextField nameTF = new TextField();
+		Label chooseDay = new Label("Day Transaction is Scheduled");
+		TextField dayTF = new TextField();
+		Label payLbl = new Label("Payment Amount");
+		TextField payTF = new TextField();
+		Button schedTransBtn = new Button("add Scheduled Transaction");
+		Button cancelBtn = new Button("Cancel");
+		
+		accounts.getItems().addAll(FileIOHandler.loadAccounts());
+		accounts.setValue(accounts.getItems().getFirst());
+		types.getItems().addAll(FileIOHandler.loadTransTypes());
+		types.setValue(types.getItems().getFirst());
+		frequency.getItems().add("Monthly");
+		frequency.setValue(frequency.getItems().getFirst());
+		
+		title.getChildren().add(titleLbl);	
+		buttonPane.getChildren().addAll(schedTransBtn, cancelBtn);
+		pane.getChildren().addAll(title, chooseAcc, accounts, chooseType, types, chooseFreq, frequency,
+				chooseDay,dayTF, chooseName, nameTF,payLbl, payTF, buttonPane);
+		
+		schedTransBtn.setOnAction(e ->{
+			Account account = accounts.getValue();
+			TransactionType type = types.getValue();
+			String freq = frequency.getValue();
+			String name = nameTF.getText();
+			String dayText = dayTF.getText();
+			String paymentText = payTF.getText();
+			boolean payIsDouble = isDouble(paymentText);
+			if(account == null)
+				showAlert("Empty Account", "Must choose an account");
+			else if(type == null)
+				showAlert("Empty Transaction Type", "Must choose a transaction type");
+			else if(dayText == "")
+				showAlert("Invalid Description", "Must enter a day for the transaction");
+			else if(name == "")
+				showAlert("Invalid Name", "Must enter transaction name");
+			else if(FileIOHandler.isDuplicateSchedule(name))
+				showAlert("Invalid Name", "Must enter a unique name");
+			else if(!payIsDouble)
+				showAlert("Invalid Payment", "Must enter a valid payment amount");
+			else
+			{
+				int day = Integer.parseInt(dayText);
+				double payment = Double.parseDouble(paymentText);
+				FileIOHandler.writeScheduledTransaction(account, type, freq, name, day, payment);
+				showAlert("Valid New Schedule Transaction Sumbission", "Scheduled Transaction saved successfully");
+				nameTF.clear();
+				dayTF.clear();
+				payTF.clear();
+				stage.setScene(getHomeScene(stage));
+			}	
+		});
+		
+		cancelBtn.setOnAction(e -> stage.setScene(homeScene));
+		
+		newSchedTransScene = new Scene(pane, 600, 600);
+		newSchedTransScene.getStylesheets().add(CSS_FILE_PATH);
+		return newSchedTransScene;
+	}
 	/**
 	 * Checks that desired new account balance is a valid number.
 	 * @param str

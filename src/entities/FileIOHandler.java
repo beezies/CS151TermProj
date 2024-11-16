@@ -14,6 +14,7 @@ public class FileIOHandler {
 	private static final String ACCOUNTS_FILE_PATH = "src/data_files/accounts.csv";
 	private static final String TRANSACTIONTYPES_FILE_PATH = "src/data_files/transactionTypes.csv";
 	private static final String TRANSACTIONS_FILE_PATH = "src/data_files/transactions.csv";
+	private static final String SCHEDULEDTRANSACTIONS_FILE_PATH = "src/data_files/scheduledTransactions.csv";
 	
 	/**
 	 * 
@@ -184,4 +185,62 @@ public class FileIOHandler {
 		Collections.sort(transactions);
 		return transactions;
 	}
+	public static void writeScheduledTransaction(Account account, TransactionType type, String frequency, 
+			String name, int day,  Double amount) {
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter(SCHEDULEDTRANSACTIONS_FILE_PATH, true))) {
+			String line = account.toString() + "," + type.toString() + "," + frequency + "," + name 
+					+ "," + day + "," + amount;
+			writer.write(line);
+			writer.newLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	public static boolean isDuplicateSchedule(String schedName) {
+		try (BufferedReader reader = new BufferedReader(new FileReader(SCHEDULEDTRANSACTIONS_FILE_PATH))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split(",");
+				if (parts[3].trim().equalsIgnoreCase(schedName)) {
+					return true;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	public static ArrayList<ScheduledTransaction> loadScheduledTransactions() {
+		ArrayList<ScheduledTransaction> schedTransactions = new ArrayList<ScheduledTransaction>();
+		ArrayList<Account> accs = loadAccounts();
+		ArrayList<TransactionType> types = loadTransTypes();
+		
+		try (BufferedReader reader = new BufferedReader(new FileReader(SCHEDULEDTRANSACTIONS_FILE_PATH))) {
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split(",");
+				String accName = parts[0].trim();
+				Account acc = new Account("", null, 0);
+				for (Account a:accs) {
+					if (a.getName().equals(accName)) acc = a;
+				}
+				String typeString = parts[1].trim();
+				TransactionType type = new TransactionType("");
+				for (TransactionType t:types) {
+					if (t.getName().equals(typeString)) type = t;
+				}
+				String frequency = parts[2].trim();
+				String name = parts[3].trim();
+				int day = Integer.valueOf(parts[4].trim());
+				double amt = Double.valueOf(parts[5].trim());
+				ScheduledTransaction t = new ScheduledTransaction(acc, type, frequency, name, day, amt);
+				schedTransactions.add(t);
+			} 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Collections.sort(schedTransactions);
+		return schedTransactions;
+	}
+
 }

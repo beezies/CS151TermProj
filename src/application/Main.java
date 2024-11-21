@@ -326,7 +326,11 @@ public class Main extends Application{
 				descTF.clear();
 				payTF.clear();
 				depTF.clear();
-				stage.setScene(getHomeScene());
+				if (editMode) {
+					stage.setScene(getTransScene());
+				} else {
+					stage.setScene(getHomeScene());
+				}
 			}	
 		});
 		if (editMode) {
@@ -495,7 +499,7 @@ public class Main extends Application{
 				showAlert("Invalid Description", "Must enter a day for the transaction");
 			else if(name == "")
 				showAlert("Invalid Name", "Must enter transaction name");
-			else if(FileIOHandler.isDuplicateSchedule(name))
+			else if(FileIOHandler.isDuplicateSchedule(name) && !(editMode && name.equals(trans.getName())))
 				showAlert("Invalid Name", "Must enter a unique name");
 			else if(!payIsDouble)
 				showAlert("Invalid Payment", "Must enter a valid payment amount");
@@ -509,7 +513,11 @@ public class Main extends Application{
 				nameTF.clear();
 				dayTF.clear();
 				payTF.clear();
-				stage.setScene(getHomeScene());
+				if (editMode) {
+					stage.setScene(getSchedTransScene());
+				} else {
+					stage.setScene(getHomeScene());
+				}
 			}	
 		});
 		if (editMode) {

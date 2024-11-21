@@ -12,13 +12,14 @@
 
 HBox {
     -fx-alignment: center ;
-    -fx-padding: 40 ;
+    -fx-padding: 20 ;
 	-fx-font-family: "Brush Script MT";
 	-fx-font-size: 24pt;
 }
 
 VBox {
 	-fx-alignment: center ;
+	-fx-padding: 20 20 20 20 ;
 }
 
 

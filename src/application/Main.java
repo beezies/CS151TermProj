@@ -74,9 +74,6 @@ public class Main extends Application{
 		VBox right = new VBox();
 		
 		Label title = new Label("Money Money Money");
-		Label blnk = new Label("        ");
-		Label blnk2 = new Label("        ");
-		Label blnk3 = new Label("        ");
 		
 		Button newAccBtn = new Button("Add New Account");
 		Button transBtn = new Button("View Transactions");
@@ -102,8 +99,6 @@ public class Main extends Application{
 		}
 		
 		top.getChildren().add(title);
-		right.getChildren().add(blnk);
-		left.getChildren().add(blnk2);
 		pane.setTop(top);
 		pane.setRight(right);
 		pane.setLeft(left);
@@ -114,7 +109,6 @@ public class Main extends Application{
 		center.getChildren().add(newTransBtn);
 		center.getChildren().add(newSchedTransBtn);
 		center.getChildren().add(newTransTypeBtn);
-		center.getChildren().add(blnk3);
 		center.setSpacing(10);
 		pane.setCenter(center);
 		
@@ -204,7 +198,7 @@ public class Main extends Application{
 		
 		Label lbl = new Label("Define New Transaction Type");
 		TextField typeTF = new TextField();
-		Button typeBtn = new Button("add Transaction Type");
+		Button typeBtn = new Button("Add Transaction Type");
 		Button cancelBtn = new Button("Cancel");
 		
 		title.getChildren().add(lbl);
@@ -258,7 +252,7 @@ public class Main extends Application{
 		TextField payTF = new TextField();
 		Label depLbl = new Label("Deposit Amount");
 		TextField depTF = new TextField();
-		Button transBtn = new Button("add Transaction");
+		Button transBtn = new Button("Add Transaction");
 		Button cancelBtn = new Button("Cancel");
 		
 		accounts.getItems().addAll(FileIOHandler.loadAccounts());
@@ -332,9 +326,6 @@ public class Main extends Application{
 		VBox right = new VBox();
 		
 		Label title = new Label("Transactions");
-		Label blnk = new Label("        ");
-		Label blnk2 = new Label("        ");
-		Label blnk3 = new Label("        ");	
 		TextField filterField = new TextField();
 		filterField.setPromptText("Filter transactions...");
 		
@@ -374,6 +365,7 @@ public class Main extends Application{
 	        	if (event.getClickCount() == 2) {
 	            int index = transTable.getSelectionModel().getSelectedIndex();
 	            Transaction t = transTable.getItems().get(index);
+	            
 	            System.out.println(t);
 	        	}
 	        }
@@ -381,15 +373,12 @@ public class Main extends Application{
 		
 		Button backBtn = new Button("Back");
 		top.getChildren().add(title);
-		right.getChildren().add(blnk);
-		left.getChildren().add(blnk2);
 		pane.setTop(top);
 		pane.setRight(right);
 		pane.setLeft(left);
 		center.getChildren().add(filterField);
 		center.getChildren().add(transTable);
 		center.getChildren().add(backBtn);
-		center.getChildren().add(blnk3);
 		center.setSpacing(10);
 		pane.setCenter(center);
 		
@@ -494,9 +483,6 @@ public class Main extends Application{
 		VBox right = new VBox();
 		
 		Label title = new Label("Scheduled Transactions");
-		Label blnk = new Label("        ");
-		Label blnk2 = new Label("        ");
-		Label blnk3 = new Label("        ");	
 		TextField filter = new TextField();
 		filter.setPromptText("Filter transactions...");
 		
@@ -544,15 +530,12 @@ public class Main extends Application{
 	    
 		Button backBtn = new Button("Back");
 		top.getChildren().add(title);
-		right.getChildren().add(blnk);
-		left.getChildren().add(blnk2);
 		pane.setTop(top);
 		pane.setRight(right);
 		pane.setLeft(left);
 		center.getChildren().add(filter);
 		center.getChildren().add(transTable);
 		center.getChildren().add(backBtn);
-		center.getChildren().add(blnk3);
 		center.setSpacing(10);
 		pane.setCenter(center);
 		

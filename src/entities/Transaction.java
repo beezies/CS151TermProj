@@ -42,4 +42,8 @@ public class Transaction implements Comparable<Transaction>{
 	public LocalDate getDate() {
 		return date;
 	}
+	
+	public String toString() {
+		return desc;
+	}
 }

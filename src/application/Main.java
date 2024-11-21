@@ -24,6 +24,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -366,6 +368,16 @@ public class Main extends Application{
 	            else return false; 
 	        });
 	    });
+	    
+	    transTable.setOnMouseClicked((MouseEvent event) -> {
+	        if (event.getButton().equals(MouseButton.PRIMARY)) {
+	        	if (event.getClickCount() == 2) {
+	            int index = transTable.getSelectionModel().getSelectedIndex();
+	            Transaction t = transTable.getItems().get(index);
+	            System.out.println(t);
+	        	}
+	        }
+	    });
 		
 		Button backBtn = new Button("Back");
 		top.getChildren().add(title);
@@ -520,7 +532,16 @@ public class Main extends Application{
 	            else return false; 
 	        });
 	    });
-		
+	    transTable.setOnMouseClicked((MouseEvent event) -> {
+	        if (event.getButton().equals(MouseButton.PRIMARY)) {
+	        	if (event.getClickCount() == 2) {
+	            int index = transTable.getSelectionModel().getSelectedIndex();
+	            ScheduledTransaction t = transTable.getItems().get(index);
+	            System.out.println(t);
+	        	}
+	        }
+	    });
+	    
 		Button backBtn = new Button("Back");
 		top.getChildren().add(title);
 		right.getChildren().add(blnk);

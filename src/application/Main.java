@@ -33,6 +33,8 @@ import javafx.scene.layout.VBox;
 @SuppressWarnings("deprecation")
 public class Main extends Application{
 	
+	Stage stage;
+	
 	Scene homeScene;
 	Scene newAccScene;
 	Scene newTransTypeScene;
@@ -47,13 +49,15 @@ public class Main extends Application{
 
 	@Override
     public void start(Stage stage) {
+		
+		this.stage = stage;
 				
-		homeScene = getHomeScene(stage);
-		newAccScene = getNewAccScene(stage);
-		newTransTypeScene = getNewTransTypeScene(stage);
-		newTransScene = getNewTransScene(stage);
-		transScene = getTransScene(stage);
-		newSchedTransScene = getNewSchedTransScene(stage);
+		homeScene = getHomeScene();
+		newAccScene = getNewAccScene();
+		newTransTypeScene = getNewTransTypeScene();
+		newTransScene = getNewTransScene();
+		transScene = getTransScene();
+		newSchedTransScene = getNewSchedTransScene();
         stage.setScene(homeScene);
         stage.show();
 		
@@ -66,7 +70,7 @@ public class Main extends Application{
 	 * @return Home scene
 	 */
 	@SuppressWarnings("unchecked")
-	public Scene getHomeScene(Stage stage) {
+	public Scene getHomeScene() {
 		BorderPane pane = new BorderPane();
 		HBox top = new HBox();
 		VBox center = new VBox();
@@ -113,11 +117,11 @@ public class Main extends Application{
 		pane.setCenter(center);
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
-		transBtn.setOnAction(e -> stage.setScene(getTransScene(stage)));
-		newTransBtn.setOnAction(e -> stage.setScene(getNewTransScene(stage)));
+		transBtn.setOnAction(e -> stage.setScene(getTransScene()));
+		newTransBtn.setOnAction(e -> stage.setScene(getNewTransScene()));
 		newTransTypeBtn.setOnAction(e -> stage.setScene(newTransTypeScene));
-		newSchedTransBtn.setOnAction(e -> stage.setScene(getNewSchedTransScene(stage)));
-		schedTransBtn.setOnAction(e -> stage.setScene(getSchedTransScene(stage)));
+		newSchedTransBtn.setOnAction(e -> stage.setScene(getNewSchedTransScene()));
+		schedTransBtn.setOnAction(e -> stage.setScene(getSchedTransScene()));
 		
 		homeScene = new Scene(pane, 800, 700);
 		homeScene.getStylesheets().add(CSS_FILE_PATH);
@@ -130,7 +134,7 @@ public class Main extends Application{
 	 * @param stage
 	 * @return New account scene
 	 */
-	public Scene getNewAccScene(Stage stage) {
+	public Scene getNewAccScene() {
 		VBox pane = new VBox();
 		HBox titlePane = new HBox();
 		VBox fieldPane = new VBox();
@@ -174,7 +178,7 @@ public class Main extends Application{
 					nameTF.clear();
 					dp.setValue(LocalDate.now());
 					balanceTF.clear();
-					stage.setScene(getHomeScene(stage));
+					stage.setScene(getHomeScene());
 				}
 		});
 
@@ -191,7 +195,7 @@ public class Main extends Application{
 	 * @param stage
 	 * @return New transaction type scene
 	 */
-	public Scene getNewTransTypeScene(Stage stage){
+	public Scene getNewTransTypeScene(){
 		VBox pane = new VBox();
 		HBox title = new HBox();
 		HBox buttonPane = new HBox();
@@ -217,7 +221,7 @@ public class Main extends Application{
 				FileIOHandler.writeTransType(typeName);
 				showAlert("Valid New Transaction Type Submission", "Transaction type saved successfully");
 				typeTF.clear();
-				stage.setScene(getHomeScene(stage));
+				stage.setScene(getHomeScene());
 			}
 		});
 		
@@ -234,7 +238,7 @@ public class Main extends Application{
 	 * @param stage
 	 * @return
 	 */
-	private Scene getNewTransScene(Stage stage) {
+	private Scene getNewTransScene() {
 		VBox pane = new VBox();
 		HBox title = new HBox();
 		HBox buttonPane = new HBox();
@@ -300,7 +304,7 @@ public class Main extends Application{
 				descTF.clear();
 				payTF.clear();
 				depTF.clear();
-				stage.setScene(getHomeScene(stage));
+				stage.setScene(getHomeScene());
 			}	
 		});
 		
@@ -318,7 +322,7 @@ public class Main extends Application{
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public Scene getTransScene(Stage stage) {
+	public Scene getTransScene() {
 		BorderPane pane = new BorderPane();
 		HBox top = new HBox();
 		VBox center = new VBox();
@@ -395,7 +399,7 @@ public class Main extends Application{
 	 * @param stage
 	 * @return
 	 */
-	private Scene getNewSchedTransScene(Stage stage) {
+	private Scene getNewSchedTransScene( ) {
 		VBox pane = new VBox();
 		HBox title = new HBox();
 		HBox buttonPane = new HBox();
@@ -457,7 +461,7 @@ public class Main extends Application{
 				nameTF.clear();
 				dayTF.clear();
 				payTF.clear();
-				stage.setScene(getHomeScene(stage));
+				stage.setScene(getHomeScene());
 			}	
 		});
 		
@@ -475,7 +479,7 @@ public class Main extends Application{
 	 * @param stage
 	 * @return
 	 */
-	private Scene getSchedTransScene(Stage stage) {
+	private Scene getSchedTransScene() {
 		BorderPane pane = new BorderPane();
 		HBox top = new HBox();
 		VBox center = new VBox();

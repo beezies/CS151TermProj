@@ -3,6 +3,8 @@ package entities;
 import java.time.LocalDate;
 
 public class Transaction implements Comparable<Transaction>{
+	
+	private long ID;
 	private Account account;
 	private TransactionType type;
 	private LocalDate date;
@@ -11,11 +13,21 @@ public class Transaction implements Comparable<Transaction>{
 	
 	public Transaction(Account account, TransactionType type, LocalDate transDate, String desc, Double amount)
 	{
+		this.ID = hashCode();
 		this.account = account;
 		this.type = type;
 		this.date = transDate;
 		this.desc = desc;
 		this.amount = amount;
+	}
+	
+	public Transaction(long ID, Account acc, TransactionType type2, LocalDate date2, String desc2, double amt) {
+		this(acc, type2, date2, desc2, amt);
+		this.ID = ID;
+	}
+
+	public long getID() {
+		return ID;
 	}
 	
 	@Override

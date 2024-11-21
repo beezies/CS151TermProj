@@ -7,7 +7,6 @@ import entities.Account;
 import entities.FileIOHandler;
 import entities.Transaction;
 import entities.TransactionType;
-import entities.User;
 import entities.ScheduledTransaction;
 
 import javafx.application.Application;
@@ -38,12 +37,11 @@ public class Main extends Application{
 	Scene homeScene;
 	Scene newAccScene;
 	Scene newTransTypeScene;
-	Scene newTransScene;
+	Scene editTransScene;
 	Scene transScene;
 	Scene newSchedTransScene;
 	Scene schedTransScene;
 	
-	User user;
 	LocalDate date = LocalDate.now();
 	
 	private static final String CSS_FILE_PATH = "application/style/financeStyle.css";
@@ -53,12 +51,9 @@ public class Main extends Application{
 		
 		this.stage = stage;
 				
-		homeScene = getHomeScene();
 		newAccScene = getNewAccScene();
-		newTransTypeScene = getNewTransTypeScene();
-		newTransScene = getEditTransScene(null);
+		homeScene = getHomeScene();
 		transScene = getTransScene();
-		newSchedTransScene = getEditSchedTransScene(null);
 		schedTransScene = getSchedTransScene();
         stage.setScene(homeScene);
         stage.show();
@@ -108,12 +103,7 @@ public class Main extends Application{
 		pane.setRight(right);
 		pane.setLeft(left);
 		center.getChildren().add(accTable);
-		center.getChildren().add(newAccBtn);
-		center.getChildren().add(transBtn);
-		center.getChildren().add(schedTransBtn);
-		center.getChildren().add(newTransBtn);
-		center.getChildren().add(newSchedTransBtn);
-		center.getChildren().add(newTransTypeBtn);
+		center.getChildren().addAll(newAccBtn, transBtn, schedTransBtn, newTransBtn, newSchedTransBtn, newTransTypeBtn);
 		center.setSpacing(10);
 		pane.setCenter(center);
 		
@@ -238,6 +228,13 @@ public class Main extends Application{
 	 * @return
 	 */
 	private Scene getEditTransScene(Transaction trans) {
+		ArrayList<Account> accList = FileIOHandler.loadAccounts();
+		ArrayList<TransactionType> typeList = FileIOHandler.loadTransTypes();
+		if (accList.isEmpty() || typeList.isEmpty()) {
+			showAlert("Cannot Open Page", "You must have at least one Account and Transaction Type on file before scheduling a transaction.");
+			return homeScene;
+		}
+		
 		Boolean editMode = (trans != null);
 		
 		VBox pane = new VBox();
@@ -264,8 +261,8 @@ public class Main extends Application{
 				-fx-base: rgb(233, 62, 22);
 				""");
 		
-		accounts.getItems().addAll(FileIOHandler.loadAccounts());
-		types.getItems().addAll(FileIOHandler.loadTransTypes());
+		accounts.getItems().addAll(accList);
+		types.getItems().addAll(typeList);
 		
 		if (editMode) {
 			System.out.println(trans);
@@ -320,7 +317,8 @@ public class Main extends Application{
 				else
 					amount = Double.parseDouble(deposit);
 				if (editMode) FileIOHandler.deleteTrans(trans);
-				FileIOHandler.writeTransaction(account, type, transDate, desc, amount);
+				Transaction newTrans = new Transaction(account, type, transDate, desc, amount);
+				FileIOHandler.writeTransaction(newTrans);
 				showAlert("Valid New Transaction Sumbission", "Transaction saved successfully");
 				dp.setValue(LocalDate.now());
 				descTF.clear();
@@ -342,9 +340,9 @@ public class Main extends Application{
 		} else {
 			cancelBtn.setOnAction(e -> stage.setScene(homeScene));
 		}
-		newTransScene = new Scene(pane, 600, 600);
-		newTransScene.getStylesheets().add(CSS_FILE_PATH);
-		return newTransScene;
+		editTransScene = new Scene(pane, 600, 600);
+		editTransScene.getStylesheets().add(CSS_FILE_PATH);
+		return editTransScene;
 	}
 	
 	/**
@@ -354,6 +352,7 @@ public class Main extends Application{
 	 */
 	@SuppressWarnings("unchecked")
 	public Scene getTransScene() {
+		
 		BorderPane pane = new BorderPane();
 		HBox top = new HBox();
 		VBox center = new VBox();
@@ -420,7 +419,7 @@ public class Main extends Application{
 		
 		backBtn.setOnAction(e -> stage.setScene(homeScene));
 		
-		transScene = new Scene(pane, 700, 600);
+		transScene = new Scene(pane, 800, 600);
 		transScene.getStylesheets().add(CSS_FILE_PATH);
 		return transScene;
 	}
@@ -432,6 +431,13 @@ public class Main extends Application{
 	 * @return
 	 */
 	private Scene getEditSchedTransScene(ScheduledTransaction trans) {
+		ArrayList<Account> accList = FileIOHandler.loadAccounts();
+		ArrayList<TransactionType> typeList = FileIOHandler.loadTransTypes();
+		if (accList.isEmpty() || typeList.isEmpty()) {
+			showAlert("Cannot Open Page", "You must have at least one Account and Transaction Type on file before scheduling a transaction.");
+			return homeScene;
+		}
+		
 		Boolean editMode = (trans != null);
 		
 		VBox pane = new VBox();
@@ -458,8 +464,8 @@ public class Main extends Application{
 				-fx-base: rgb(233, 62, 22);
 				""");
 		
-		accounts.getItems().addAll(FileIOHandler.loadAccounts());
-		types.getItems().addAll(FileIOHandler.loadTransTypes());
+		accounts.getItems().addAll(accList);
+		types.getItems().addAll(typeList);
 		frequency.getItems().add("Monthly");
 		
 		if (editMode) {
@@ -508,7 +514,8 @@ public class Main extends Application{
 				int day = Integer.parseInt(dayText);
 				double payment = Double.parseDouble(paymentText);
 				if (editMode) FileIOHandler.deleteSchedTrans(trans);
-				FileIOHandler.writeScheduledTransaction(account, type, freq, name, day, payment);
+				ScheduledTransaction newTrans = new ScheduledTransaction(account, type, freq, name, day, payment);
+				FileIOHandler.writeScheduledTransaction(newTrans);
 				showAlert("Valid New Schedule Transaction Sumbission", "Scheduled Transaction saved successfully");
 				nameTF.clear();
 				dayTF.clear();

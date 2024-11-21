@@ -3,6 +3,7 @@ package entities;
 
 public class ScheduledTransaction implements Comparable<ScheduledTransaction> {
 
+	private long ID;
 	private Account account;
 	private TransactionType type;
 	private String frequency;
@@ -11,8 +12,14 @@ public class ScheduledTransaction implements Comparable<ScheduledTransaction> {
 	private double amount;
 	
 	
+	public ScheduledTransaction(long ID, Account account, TransactionType type, String frequency, String name, 
+			int day, double amount) {
+		this(account, type, frequency, name, day, amount);
+		this.ID = ID;
+	}
 	public ScheduledTransaction(Account account, TransactionType type, String frequency, String name, 
 			int day, double amount) {
+		this.ID = this.hashCode();
 		this.account = account;
 		this.type = type;
 		this.frequency = frequency;
@@ -20,6 +27,11 @@ public class ScheduledTransaction implements Comparable<ScheduledTransaction> {
 		this.day = day;
 		this.amount = amount;
 	}
+	
+	public long getID() {
+		return ID;
+	}
+
 	public Account getAccount() {
 		return account;
 	}

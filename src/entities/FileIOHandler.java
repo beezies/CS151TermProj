@@ -146,9 +146,11 @@ public class FileIOHandler {
 		}
 		return false;
 	}
-	public static void writeTransaction(Account account, TransactionType type, LocalDate date, String desc, Double amount) {
+	
+	public static void writeTransaction(Transaction trans) {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(TRANSACTIONS_FILE_PATH, true))) {
-			String line = account.toString() + "," + type.toString() + "," + date + "," + desc + "," + amount;
+			String line = trans.getAccount() + "," + trans.getType() + "," + trans.getDate() + "," + 
+					trans.getDesc() + "," + trans.getAmount() + "," + trans.getID();
 			writer.write(line);
 			writer.newLine();
 		} catch (IOException e) {
@@ -178,7 +180,8 @@ public class FileIOHandler {
 				LocalDate date = LocalDate.parse(parts[2].trim());
 				String desc = parts[3].trim();
 				double amt = Double.valueOf(parts[4].trim());
-				Transaction t = new Transaction(acc, type, date, desc, amt);
+				long ID = Long.valueOf(parts[5].trim());
+				Transaction t = new Transaction(ID, acc, type, date, desc, amt);
 				transactions.add(t);
 			} 
 		} catch (Exception e) {
@@ -187,11 +190,10 @@ public class FileIOHandler {
 		Collections.sort(transactions);
 		return transactions;
 	}
-	public static void writeScheduledTransaction(Account account, TransactionType type, String frequency, 
-			String name, int day,  Double amount) {
+	public static void writeScheduledTransaction(ScheduledTransaction trans) {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(SCHEDULEDTRANSACTIONS_FILE_PATH, true))) {
-			String line = account.toString() + "," + type.toString() + "," + frequency + "," + name 
-					+ "," + day + "," + amount;
+			String line = trans.getAccount() + "," + trans.getType() + "," + trans.getFrequency() + "," + trans.getName() 
+					+ "," + trans.getDay() + "," + trans.getAmount() + "," + trans.getID();
 			writer.write(line);
 			writer.newLine();
 		} catch (IOException e) {
@@ -236,7 +238,8 @@ public class FileIOHandler {
 				String name = parts[3].trim();
 				int day = Integer.valueOf(parts[4].trim());
 				double amt = Double.valueOf(parts[5].trim());
-				ScheduledTransaction t = new ScheduledTransaction(acc, type, frequency, name, day, amt);
+				long ID = Long.valueOf(parts[6].trim());
+				ScheduledTransaction t = new ScheduledTransaction(ID, acc, type, frequency, name, day, amt);
 				schedTransactions.add(t);
 			} 
 		} catch (Exception e) {
@@ -261,8 +264,8 @@ public class FileIOHandler {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String[] parts = line.split(",");
-				String accDesc = parts[3].trim();
-				if (accDesc.equals(trans.getDesc())) {
+				Long id = Long.valueOf(parts[5].trim());
+				if (id.equals(trans.getID())) {
 					continue;
 				} else {
 					writer.write(line);
@@ -299,8 +302,8 @@ public class FileIOHandler {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				String[] parts = line.split(",");
-				String accName = parts[3].trim();
-				if (accName.equals(trans.getName())) {
+				Long id = Long.valueOf(parts[6].trim());
+				if (id.equals(trans.getID())) {
 					continue;
 				} else {
 					writer.write(line);

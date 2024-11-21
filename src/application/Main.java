@@ -55,6 +55,7 @@ public class Main extends Application{
 		homeScene = getHomeScene();
 		transScene = getTransScene();
 		schedTransScene = getSchedTransScene();
+		newTransTypeScene = getNewTransTypeScene();
         stage.setScene(homeScene);
         stage.show();
 		

@@ -41,6 +41,7 @@ public class Main extends Application{
 	Scene newTransScene;
 	Scene transScene;
 	Scene newSchedTransScene;
+	Scene schedTransScene;
 	
 	User user;
 	LocalDate date = LocalDate.now();
@@ -58,6 +59,7 @@ public class Main extends Application{
 		newTransScene = getEditTransScene(null);
 		transScene = getTransScene();
 		newSchedTransScene = getEditSchedTransScene(null);
+		schedTransScene = getSchedTransScene();
         stage.setScene(homeScene);
         stage.show();
 		
@@ -117,7 +119,7 @@ public class Main extends Application{
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
 		transBtn.setOnAction(e -> stage.setScene(getTransScene()));
-		newTransBtn.setOnAction(e -> stage.setScene(getEditTransScene(new Transaction(new Account("bleh", date, 0), new TransactionType("bleh2"), date, "bleh3", 20.0))));
+		newTransBtn.setOnAction(e -> stage.setScene(getEditTransScene(null)));
 		newTransTypeBtn.setOnAction(e -> stage.setScene(newTransTypeScene));
 		newSchedTransBtn.setOnAction(e -> stage.setScene(getEditSchedTransScene(null)));
 		schedTransBtn.setOnAction(e -> stage.setScene(getSchedTransScene()));
@@ -257,6 +259,10 @@ public class Main extends Application{
 		TextField depTF = new TextField();
 		Button transBtn = new Button("Add Transaction");
 		Button cancelBtn = new Button("Cancel");
+		Button delBtn = new Button("Delete");
+		delBtn.setStyle("""
+				-fx-base: rgb(233, 62, 22);
+				""");
 		
 		accounts.getItems().addAll(FileIOHandler.loadAccounts());
 		types.getItems().addAll(FileIOHandler.loadTransTypes());
@@ -281,6 +287,7 @@ public class Main extends Application{
 		
 		title.getChildren().add(titleLbl);
 		buttonPane.getChildren().addAll(transBtn, cancelBtn);
+		if (editMode) buttonPane.getChildren().add(delBtn);
 		pane.getChildren().addAll(title, chooseAcc, accounts, chooseType, types, chooseDate, dp, descLbl, descTF,
 				payLbl, payTF, depLbl, depTF, buttonPane);
 		
@@ -312,6 +319,7 @@ public class Main extends Application{
 					amount = -Double.parseDouble(payment);
 				else
 					amount = Double.parseDouble(deposit);
+				if (editMode) FileIOHandler.deleteTrans(trans);
 				FileIOHandler.writeTransaction(account, type, transDate, desc, amount);
 				showAlert("Valid New Transaction Sumbission", "Transaction saved successfully");
 				dp.setValue(LocalDate.now());
@@ -322,7 +330,11 @@ public class Main extends Application{
 			}	
 		});
 		if (editMode) {
-			cancelBtn.setOnAction(e -> stage.setScene(getTransScene()));
+			cancelBtn.setOnAction(e -> stage.setScene(transScene));
+			delBtn.setOnAction(e -> {
+				FileIOHandler.deleteTrans(trans);
+				stage.setScene(getTransScene());
+			});
 		} else {
 			cancelBtn.setOnAction(e -> stage.setScene(homeScene));
 		}
@@ -437,12 +449,17 @@ public class Main extends Application{
 		TextField payTF = new TextField();
 		Button schedTransBtn = new Button("Add Scheduled Transaction");
 		Button cancelBtn = new Button("Cancel");
+		Button delBtn = new Button("Delete");
+		delBtn.setStyle("""
+				-fx-base: rgb(233, 62, 22);
+				""");
 		
 		accounts.getItems().addAll(FileIOHandler.loadAccounts());
 		types.getItems().addAll(FileIOHandler.loadTransTypes());
 		frequency.getItems().add("Monthly");
 		
 		if (editMode) {
+			titleLbl.setText("Edit Scheduled Transaction");
 			accounts.setValue(trans.getAccount());
 			types.setValue(trans.getType());
 			frequency.setValue(trans.getFrequency());
@@ -458,6 +475,7 @@ public class Main extends Application{
 		
 		title.getChildren().add(titleLbl);	
 		buttonPane.getChildren().addAll(schedTransBtn, cancelBtn);
+		if (editMode) buttonPane.getChildren().add(delBtn);
 		pane.getChildren().addAll(title, chooseAcc, accounts, chooseType, types, chooseFreq, frequency,
 				chooseDay,dayTF, chooseName, nameTF,payLbl, payTF, buttonPane);
 		
@@ -485,6 +503,7 @@ public class Main extends Application{
 			{
 				int day = Integer.parseInt(dayText);
 				double payment = Double.parseDouble(paymentText);
+				if (editMode) FileIOHandler.deleteSchedTrans(trans);
 				FileIOHandler.writeScheduledTransaction(account, type, freq, name, day, payment);
 				showAlert("Valid New Schedule Transaction Sumbission", "Scheduled Transaction saved successfully");
 				nameTF.clear();
@@ -494,7 +513,12 @@ public class Main extends Application{
 			}	
 		});
 		if (editMode) {
-			cancelBtn.setOnAction(e -> stage.setScene(getSchedTransScene()));
+			cancelBtn.setOnAction(e -> stage.setScene(schedTransScene));
+			delBtn.setOnAction(e -> {
+				System.out.println("Deleting..");
+				FileIOHandler.deleteSchedTrans(trans);
+				stage.setScene(getSchedTransScene());
+			});
 		} else {
 			cancelBtn.setOnAction(e -> stage.setScene(homeScene));
 		}

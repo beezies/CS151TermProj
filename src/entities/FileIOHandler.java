@@ -2,6 +2,7 @@ package entities;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,6 +16,7 @@ public class FileIOHandler {
 	private static final String TRANSACTIONTYPES_FILE_PATH = "src/data_files/transactionTypes.csv";
 	private static final String TRANSACTIONS_FILE_PATH = "src/data_files/transactions.csv";
 	private static final String SCHEDULEDTRANSACTIONS_FILE_PATH = "src/data_files/scheduledTransactions.csv";
+	private static final String TEMP_FILE_PATH = "src/data_files/tmp.csv";
 	
 	/**
 	 * 
@@ -196,6 +198,7 @@ public class FileIOHandler {
 			e.printStackTrace();
 		}
 	}
+	
 	public static boolean isDuplicateSchedule(String schedName) {
 		try (BufferedReader reader = new BufferedReader(new FileReader(SCHEDULEDTRANSACTIONS_FILE_PATH))) {
 			String line;
@@ -243,4 +246,79 @@ public class FileIOHandler {
 		return schedTransactions;
 	}
 
+	/**
+	 * 
+	 * @param trans Transaction to delete
+	 */
+	public static void deleteTrans(Transaction trans) {
+		File file = new File(TRANSACTIONS_FILE_PATH);
+		File tmp = new File(TEMP_FILE_PATH);
+		try {
+			FileReader r = new FileReader(file);
+			FileWriter w = new FileWriter(TEMP_FILE_PATH, true);
+			BufferedReader reader = new BufferedReader(r);
+			BufferedWriter writer = new BufferedWriter(w);
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split(",");
+				String accDesc = parts[3].trim();
+				if (accDesc.equals(trans.getDesc())) {
+					continue;
+				} else {
+					writer.write(line);
+					writer.newLine();
+				}
+			} 
+			reader.close();
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (!file.delete()) {
+            System.out.println("Could not delete original file.");
+            return;
+        }
+        if (!tmp.renameTo(file)) {
+            System.out.println("Could not rename temp file.");
+        }
+	}
+
+	/**
+	 * 
+	 * @param trans Scheduled transaction to delete
+	 */
+	public static void deleteSchedTrans(ScheduledTransaction trans) {
+		File file = new File(SCHEDULEDTRANSACTIONS_FILE_PATH);
+		File tmp = new File(TEMP_FILE_PATH);
+		try {
+			FileReader r = new FileReader(file);
+			FileWriter w = new FileWriter(TEMP_FILE_PATH, true);
+			BufferedReader reader = new BufferedReader(r);
+			BufferedWriter writer = new BufferedWriter(w);
+			String line;
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split(",");
+				String accName = parts[3].trim();
+				if (accName.equals(trans.getName())) {
+					continue;
+				} else {
+					writer.write(line);
+					writer.newLine();
+				}
+			} 
+			reader.close();
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (!file.delete()) {
+            System.out.println("Could not delete original file.");
+            return;
+        }
+        if (!tmp.renameTo(file)) {
+            System.out.println("Could not rename temp file.");
+        }
+	}
 }

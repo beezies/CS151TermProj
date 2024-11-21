@@ -1,6 +1,7 @@
 package application;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import entities.Account;
 import entities.FileIOHandler;
@@ -10,6 +11,8 @@ import entities.User;
 import entities.ScheduledTransaction;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -25,6 +28,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+@SuppressWarnings("deprecation")
 public class Main extends Application{
 	
 	Scene homeScene;
@@ -47,7 +51,7 @@ public class Main extends Application{
 		newTransTypeScene = getNewTransTypeScene(stage);
 		newTransScene = getNewTransScene(stage);
 		transScene = getTransScene(stage);
-		Scene newSchedTransScene = getNewSchedTransScene(stage);
+		newSchedTransScene = getNewSchedTransScene(stage);
         stage.setScene(homeScene);
         stage.show();
 		
@@ -93,7 +97,6 @@ public class Main extends Application{
 	    
 		for (Account a : FileIOHandler.loadAccounts()) {
 			accTable.getItems().add(a);
-			System.out.println(a.getName());
 		}
 		
 		top.getChildren().add(title);
@@ -318,6 +321,7 @@ public class Main extends Application{
 	 * @param stage
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public Scene getTransScene(Stage stage) {
 		BorderPane pane = new BorderPane();
 		HBox top = new HBox();
@@ -328,9 +332,14 @@ public class Main extends Application{
 		Label title = new Label("Transactions");
 		Label blnk = new Label("        ");
 		Label blnk2 = new Label("        ");
-		Label blnk3 = new Label("        ");		
+		Label blnk3 = new Label("        ");	
+		TextField filterField = new TextField();
+		filterField.setPromptText("Filter transactions...");
 		
-		TableView<Transaction> transTable = new TableView<Transaction>();
+		ArrayList<Transaction> allTransactions = FileIOHandler.loadTransactions();
+		FilteredList<Transaction> filteredTransactions = new FilteredList<>(FXCollections.observableArrayList(allTransactions), p -> true);
+		
+		TableView<Transaction> transTable = new TableView<Transaction>(filteredTransactions);
 		TableColumn<Transaction, Account> accCol = new TableColumn<>("Account");
 		accCol.setCellValueFactory(new PropertyValueFactory<>("account"));
 	    TableColumn<Transaction, TransactionType> typeCol = new TableColumn<>("Type");
@@ -345,9 +354,18 @@ public class Main extends Application{
 	    transTable.getColumns().addAll(accCol, typeCol, amtCol, dateCol, descCol);
 	    transTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 	    
-		for (Transaction a : FileIOHandler.loadTransactions()) {
-			transTable.getItems().add(a);
-		}
+	    filterField.textProperty().addListener((observable, oldValue, newValue) -> {
+	        filteredTransactions.setPredicate(transaction -> {
+	            if (newValue == null || newValue.isEmpty()) {
+	                return true;
+	            }
+	            String lowerCaseFilter = newValue.toLowerCase();
+	            if (transaction.getDesc().toString().toLowerCase().contains(lowerCaseFilter)) {
+	                return true;
+	            } 
+	            else return false; 
+	        });
+	    });
 		
 		Button backBtn = new Button("Back");
 		top.getChildren().add(title);
@@ -356,6 +374,7 @@ public class Main extends Application{
 		pane.setTop(top);
 		pane.setRight(right);
 		pane.setLeft(left);
+		center.getChildren().add(filterField);
 		center.getChildren().add(transTable);
 		center.getChildren().add(backBtn);
 		center.getChildren().add(blnk3);
@@ -364,7 +383,7 @@ public class Main extends Application{
 		
 		backBtn.setOnAction(e -> stage.setScene(homeScene));
 		
-		transScene = new Scene(pane, 650, 600);
+		transScene = new Scene(pane, 700, 600);
 		transScene.getStylesheets().add(CSS_FILE_PATH);
 		return transScene;
 	}
@@ -465,9 +484,14 @@ public class Main extends Application{
 		Label title = new Label("Scheduled Transactions");
 		Label blnk = new Label("        ");
 		Label blnk2 = new Label("        ");
-		Label blnk3 = new Label("        ");		
+		Label blnk3 = new Label("        ");	
+		TextField filter = new TextField();
+		filter.setPromptText("Filter transactions...");
 		
-		TableView<ScheduledTransaction> transTable = new TableView<ScheduledTransaction>();
+		ArrayList<ScheduledTransaction> transactions = FileIOHandler.loadScheduledTransactions();
+		FilteredList<ScheduledTransaction> filteredTransactions = new FilteredList<>(FXCollections.observableArrayList(transactions), p -> true);
+		
+		TableView<ScheduledTransaction> transTable = new TableView<ScheduledTransaction>(filteredTransactions);
 		TableColumn<ScheduledTransaction, String> nameCol = new TableColumn<>("Name");
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 		TableColumn<ScheduledTransaction, Account> accCol = new TableColumn<>("Account");
@@ -484,9 +508,18 @@ public class Main extends Application{
 	    transTable.getColumns().addAll(nameCol, accCol, typeCol, amtCol, dateCol, freqCol);
 	    transTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 	    
-		for (ScheduledTransaction a : FileIOHandler.loadScheduledTransactions()) {
-			transTable.getItems().add(a);
-		}
+	    filter.textProperty().addListener((observable, oldValue, newValue) -> {
+	        filteredTransactions.setPredicate(transaction -> {
+	            if (newValue == null || newValue.isEmpty()) {
+	                return true;
+	            }
+	            String lowerCaseFilter = newValue.toLowerCase();
+	            if (transaction.getName().toString().toLowerCase().contains(lowerCaseFilter)) {
+	                return true;
+	            } 
+	            else return false; 
+	        });
+	    });
 		
 		Button backBtn = new Button("Back");
 		top.getChildren().add(title);
@@ -495,6 +528,7 @@ public class Main extends Application{
 		pane.setTop(top);
 		pane.setRight(right);
 		pane.setLeft(left);
+		center.getChildren().add(filter);
 		center.getChildren().add(transTable);
 		center.getChildren().add(backBtn);
 		center.getChildren().add(blnk3);

@@ -41,7 +41,11 @@ public class ScheduledTransaction implements Comparable<ScheduledTransaction> {
 	@Override
 	public int compareTo(ScheduledTransaction schedule)
 	{
-		return schedule.getName().compareTo(name);
+		return day -schedule.getDay();
+	}
+	
+	public String toString() {
+		return name;
 	}
 
 }

@@ -55,9 +55,9 @@ public class Main extends Application{
 		homeScene = getHomeScene();
 		newAccScene = getNewAccScene();
 		newTransTypeScene = getNewTransTypeScene();
-		newTransScene = getNewTransScene();
+		newTransScene = getEditTransScene(null);
 		transScene = getTransScene();
-		newSchedTransScene = getNewSchedTransScene();
+		newSchedTransScene = getEditSchedTransScene(null);
         stage.setScene(homeScene);
         stage.show();
 		
@@ -66,7 +66,6 @@ public class Main extends Application{
 	/**
 	 * Returns scene for home page (useful for reloading home scene after data changes)
 	 * 
-	 * @param stage
 	 * @return Home scene
 	 */
 	@SuppressWarnings("unchecked")
@@ -118,9 +117,9 @@ public class Main extends Application{
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
 		transBtn.setOnAction(e -> stage.setScene(getTransScene()));
-		newTransBtn.setOnAction(e -> stage.setScene(getNewTransScene()));
+		newTransBtn.setOnAction(e -> stage.setScene(getEditTransScene(new Transaction(new Account("bleh", date, 0), new TransactionType("bleh2"), date, "bleh3", 20.0))));
 		newTransTypeBtn.setOnAction(e -> stage.setScene(newTransTypeScene));
-		newSchedTransBtn.setOnAction(e -> stage.setScene(getNewSchedTransScene()));
+		newSchedTransBtn.setOnAction(e -> stage.setScene(getEditSchedTransScene(null)));
 		schedTransBtn.setOnAction(e -> stage.setScene(getSchedTransScene()));
 		
 		homeScene = new Scene(pane, 800, 700);
@@ -131,7 +130,6 @@ public class Main extends Application{
 	/**
 	 * Returns scene for new account page.
 	 * 
-	 * @param stage
 	 * @return New account scene
 	 */
 	public Scene getNewAccScene() {
@@ -192,7 +190,6 @@ public class Main extends Application{
 	/**
 	 * Returns scene for new transaction type page.
 	 * 
-	 * @param stage
 	 * @return New transaction type scene
 	 */
 	public Scene getNewTransTypeScene(){
@@ -234,16 +231,18 @@ public class Main extends Application{
 	
 	/**
 	 * Returns scene to add a new transaction.
+	 * @param trans If provided, the transaction to edit. If null, will create a new transaction.
 	 * 
-	 * @param stage
 	 * @return
 	 */
-	private Scene getNewTransScene() {
+	private Scene getEditTransScene(Transaction trans) {
+		Boolean editMode = (trans != null);
+		
 		VBox pane = new VBox();
 		HBox title = new HBox();
 		HBox buttonPane = new HBox();
 		
-		Label titleLbl = new Label("Add new Transaction");
+		Label titleLbl = new Label("Add New Transaction");
 		Label chooseAcc = new Label("Choose account that made this transaction");
 		ChoiceBox<Account> accounts = new ChoiceBox<Account>();
 		Label chooseType = new Label("Choose transaction type");
@@ -260,10 +259,25 @@ public class Main extends Application{
 		Button cancelBtn = new Button("Cancel");
 		
 		accounts.getItems().addAll(FileIOHandler.loadAccounts());
-		accounts.setValue(accounts.getItems().getFirst());
 		types.getItems().addAll(FileIOHandler.loadTransTypes());
-		types.setValue(types.getItems().getFirst());
 		
+		if (editMode) {
+			System.out.println(trans);
+			titleLbl.setText("Edit Transaction");
+			accounts.setValue(trans.getAccount());
+			types.setValue(trans.getType());
+			dp.setValue(trans.getDate());
+			descTF.setText(trans.getDesc());
+			if (trans.getAmount() <= 0) {
+				payTF.setText(Double.toString(trans.getAmount()));
+			} else { 
+				depTF.setText(Double.toString(trans.getAmount())); 
+			}
+			transBtn.setText("Save");
+		} else {
+			accounts.setValue(accounts.getItems().getFirst());
+			types.setValue(types.getItems().getFirst());
+		}
 		
 		title.getChildren().add(titleLbl);
 		buttonPane.getChildren().addAll(transBtn, cancelBtn);
@@ -307,9 +321,11 @@ public class Main extends Application{
 				stage.setScene(getHomeScene());
 			}	
 		});
-		
-		cancelBtn.setOnAction(e -> stage.setScene(homeScene));
-		
+		if (editMode) {
+			cancelBtn.setOnAction(e -> stage.setScene(getTransScene()));
+		} else {
+			cancelBtn.setOnAction(e -> stage.setScene(homeScene));
+		}
 		newTransScene = new Scene(pane, 600, 600);
 		newTransScene.getStylesheets().add(CSS_FILE_PATH);
 		return newTransScene;
@@ -318,7 +334,6 @@ public class Main extends Application{
 	/**
 	 * Returns scene to show all transactions.
 	 * 
-	 * @param stage
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -370,6 +385,7 @@ public class Main extends Application{
 	            int index = transTable.getSelectionModel().getSelectedIndex();
 	            Transaction t = transTable.getItems().get(index);
 	            
+	            stage.setScene(getEditTransScene(t));
 	            System.out.println(t);
 	        	}
 	        }
@@ -396,10 +412,12 @@ public class Main extends Application{
 	/**
 	 * Scene for adding a scheduled transaction.
 	 * 
-	 * @param stage
+	 * @param trans If provided, the transaction to edit. If null, create a new transaction.
 	 * @return
 	 */
-	private Scene getNewSchedTransScene( ) {
+	private Scene getEditSchedTransScene(ScheduledTransaction trans) {
+		Boolean editMode = (trans != null);
+		
 		VBox pane = new VBox();
 		HBox title = new HBox();
 		HBox buttonPane = new HBox();
@@ -421,11 +439,22 @@ public class Main extends Application{
 		Button cancelBtn = new Button("Cancel");
 		
 		accounts.getItems().addAll(FileIOHandler.loadAccounts());
-		accounts.setValue(accounts.getItems().getFirst());
 		types.getItems().addAll(FileIOHandler.loadTransTypes());
-		types.setValue(types.getItems().getFirst());
 		frequency.getItems().add("Monthly");
-		frequency.setValue(frequency.getItems().getFirst());
+		
+		if (editMode) {
+			accounts.setValue(trans.getAccount());
+			types.setValue(trans.getType());
+			frequency.setValue(trans.getFrequency());
+			nameTF.setText(trans.getName());
+			dayTF.setText(Integer.toString(trans.getDay()));
+			payTF.setText(Double.toString(trans.getAmount()));
+			schedTransBtn.setText("Save");
+		} else {
+			accounts.setValue(accounts.getItems().getFirst());
+			types.setValue(types.getItems().getFirst());
+			frequency.setValue(frequency.getItems().getFirst());
+		}
 		
 		title.getChildren().add(titleLbl);	
 		buttonPane.getChildren().addAll(schedTransBtn, cancelBtn);
@@ -464,8 +493,11 @@ public class Main extends Application{
 				stage.setScene(getHomeScene());
 			}	
 		});
-		
-		cancelBtn.setOnAction(e -> stage.setScene(homeScene));
+		if (editMode) {
+			cancelBtn.setOnAction(e -> stage.setScene(getSchedTransScene()));
+		} else {
+			cancelBtn.setOnAction(e -> stage.setScene(homeScene));
+		}
 		
 		newSchedTransScene = new Scene(pane, 600, 600);
 		newSchedTransScene.getStylesheets().add(CSS_FILE_PATH);
@@ -476,7 +508,6 @@ public class Main extends Application{
 	/**
 	 * Scene for showing all scheduled transactions.
 	 * 
-	 * @param stage
 	 * @return
 	 */
 	private Scene getSchedTransScene() {
@@ -527,6 +558,7 @@ public class Main extends Application{
 	        	if (event.getClickCount() == 2) {
 	            int index = transTable.getSelectionModel().getSelectedIndex();
 	            ScheduledTransaction t = transTable.getItems().get(index);
+	            stage.setScene(getEditSchedTransScene(t));
 	            System.out.println(t);
 	        	}
 	        }

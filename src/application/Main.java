@@ -363,6 +363,7 @@ public class Main extends Application{
 		Label title = new Label("Transactions");
 		TextField filterField = new TextField();
 		filterField.setPromptText("Filter transactions...");
+		filterField.setFocusTraversable(false);
 		
 		ArrayList<Transaction> allTransactions = FileIOHandler.loadTransactions();
 		FilteredList<Transaction> filteredTransactions = new FilteredList<>(FXCollections.observableArrayList(allTransactions), p -> true);
@@ -560,6 +561,7 @@ public class Main extends Application{
 		Label title = new Label("Scheduled Transactions");
 		TextField filter = new TextField();
 		filter.setPromptText("Filter transactions...");
+		filter.setFocusTraversable(false);
 		
 		ArrayList<ScheduledTransaction> transactions = FileIOHandler.loadScheduledTransactions();
 		FilteredList<ScheduledTransaction> filteredTransactions = new FilteredList<>(FXCollections.observableArrayList(transactions), p -> true);

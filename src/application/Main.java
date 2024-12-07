@@ -82,6 +82,7 @@ public class Main extends Application{
 		Button newTransBtn = new Button("Add Transaction");
 		Button newSchedTransBtn = new Button("Add Scheduled Transaction");
 		Button newTransTypeBtn = new Button("Add new Transaction Type");
+		Button reportBtn = new Button("Transaction Report");
 		
 		TableView<Account> accTable = new TableView<Account>();
 		TableColumn<Account, String> label = new TableColumn<>("Accounts");
@@ -106,6 +107,7 @@ public class Main extends Application{
 		center.getChildren().add(accTable);
 		center.getChildren().addAll(newAccBtn, transBtn, schedTransBtn, newTransBtn, newSchedTransBtn, newTransTypeBtn);
 		center.setSpacing(10);
+		center.getChildren().add(reportBtn);
 		pane.setCenter(center);
 		
 		newAccBtn.setOnAction(e -> stage.setScene(newAccScene));
@@ -114,6 +116,7 @@ public class Main extends Application{
 		newTransTypeBtn.setOnAction(e -> stage.setScene(newTransTypeScene));
 		newSchedTransBtn.setOnAction(e -> stage.setScene(getEditSchedTransScene(null)));
 		schedTransBtn.setOnAction(e -> stage.setScene(getSchedTransScene()));
+		reportBtn.setOnAction(e -> stage.setScene(getTransactionReportScene()));
 		
 		homeScene = new Scene(pane, 800, 700);
 		homeScene.getStylesheets().add(CSS_FILE_PATH);
@@ -346,6 +349,68 @@ public class Main extends Application{
 		return editTransScene;
 	}
 	
+	/**
+	 * Returns a scene that displays a report of transactions filtered by type.
+	 *
+	 * @return Filtered transaction report scene
+	 */
+	public Scene getTransactionReportScene() {
+	    BorderPane pane = new BorderPane();
+	    HBox top = new HBox();
+	    VBox center = new VBox();
+	    VBox left = new VBox();
+	    VBox right = new VBox();
+	
+	    Label title = new Label("Transaction Report - Filter by Type");
+	    ChoiceBox<TransactionType> typeFilter = new ChoiceBox<>();
+	    typeFilter.getItems().addAll(FileIOHandler.loadTransTypes());
+	    typeFilter.setPromptText("Select Transaction Type");
+	
+	    TableView<Transaction> reportTable = new TableView<>();
+	    TableColumn<Transaction, Account> accCol = new TableColumn<>("Account");
+	    accCol.setCellValueFactory(new PropertyValueFactory<>("account"));
+	    TableColumn<Transaction, LocalDate> dateCol = new TableColumn<>("Date");
+	    dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+	    TableColumn<Transaction, Double> amtCol = new TableColumn<>("Amount");
+	    amtCol.setCellValueFactory(new PropertyValueFactory<>("amount"));
+	    TableColumn<Transaction, String> descCol = new TableColumn<>("Description");
+	    descCol.setCellValueFactory(new PropertyValueFactory<>("desc"));
+	
+	    reportTable.getColumns().addAll(accCol, dateCol, amtCol, descCol);
+	    reportTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	
+	    // Filter Transactions by Selected Type
+	    ArrayList<Transaction> allTransactions = FileIOHandler.loadTransactions();
+	    FilteredList<Transaction> filteredTransactions = new FilteredList<>(FXCollections.observableArrayList(allTransactions), p -> true);
+	
+	    typeFilter.valueProperty().addListener((obs, oldVal, newVal) -> {
+	        if (newVal == null) {
+	            filteredTransactions.setPredicate(p -> true);
+	        } else {
+	            filteredTransactions.setPredicate(transaction -> 
+	                transaction.getType().getName().equals(newVal.getName()));
+	        }
+	    });
+	
+	    reportTable.setItems(filteredTransactions);
+	
+	    Button backBtn = new Button("Back");
+	    backBtn.setOnAction(e -> stage.setScene(homeScene));
+	
+	    top.getChildren().addAll(title);
+	    pane.setTop(top);
+	    pane.setRight(right);
+	    pane.setLeft(left);
+	    center.getChildren().addAll(typeFilter, reportTable, backBtn);
+	    center.setSpacing(10);
+	    pane.setCenter(center);
+	
+	    Scene reportScene = new Scene(pane, 800, 600);
+	    reportScene.getStylesheets().add(CSS_FILE_PATH);
+	
+	    return reportScene;
+	}
+
 	/**
 	 * Returns scene to show all transactions.
 	 * 

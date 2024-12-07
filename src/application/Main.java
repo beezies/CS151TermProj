@@ -41,6 +41,8 @@ public class Main extends Application{
 	Scene transScene;
 	Scene newSchedTransScene;
 	Scene schedTransScene;
+	Scene accReportScene;
+	Scene viewTransScene;
 	
 	LocalDate date = LocalDate.now();
 	
@@ -83,6 +85,7 @@ public class Main extends Application{
 		Button newSchedTransBtn = new Button("Add Scheduled Transaction");
 		Button newTransTypeBtn = new Button("Add new Transaction Type");
 		Button reportBtn = new Button("Transaction Report");
+		Button accReportBtn = new Button("Account Report");
 		
 		TableView<Account> accTable = new TableView<Account>();
 		TableColumn<Account, String> label = new TableColumn<>("Accounts");
@@ -105,7 +108,7 @@ public class Main extends Application{
 		pane.setRight(right);
 		pane.setLeft(left);
 		center.getChildren().add(accTable);
-		center.getChildren().addAll(newAccBtn, transBtn, schedTransBtn, newTransBtn, newSchedTransBtn, newTransTypeBtn);
+		center.getChildren().addAll(newAccBtn, transBtn, schedTransBtn, newTransBtn, newSchedTransBtn, newTransTypeBtn, accReportBtn);
 		center.setSpacing(10);
 		center.getChildren().add(reportBtn);
 		pane.setCenter(center);
@@ -117,6 +120,7 @@ public class Main extends Application{
 		newSchedTransBtn.setOnAction(e -> stage.setScene(getEditSchedTransScene(null)));
 		schedTransBtn.setOnAction(e -> stage.setScene(getSchedTransScene()));
 		reportBtn.setOnAction(e -> stage.setScene(getTransactionReportScene()));
+		accReportBtn.setOnAction(e -> stage.setScene(getAccountReportScene()));
 		
 		homeScene = new Scene(pane, 800, 700);
 		homeScene.getStylesheets().add(CSS_FILE_PATH);
@@ -688,7 +692,89 @@ public class Main extends Application{
 		transScene.getStylesheets().add(CSS_FILE_PATH);
 		return transScene;
 	}
-	
+	//Creates a Scene that reports all the transactions under an account
+	public Scene getAccountReportScene() 
+	{
+		VBox pane = new VBox();
+	    HBox titleBox = new HBox();
+	    
+	    Label title = new Label("Account Report");
+	    ChoiceBox<Account> accFilter = new ChoiceBox<>();
+	    ArrayList<Account> accounts = FileIOHandler.loadAccounts();
+	    accFilter.getItems().addAll(accounts);
+	    ArrayList<Transaction> transactions = FileIOHandler.loadTransactions();
+	    FilteredList<Transaction> filteredTransactions = new FilteredList<>(FXCollections.observableArrayList(transactions), p -> true);
+		Button back = new Button("Back");
+	    
+		TableView<Transaction> transTable = new TableView<Transaction>(filteredTransactions);
+	    TableColumn<Transaction, TransactionType> typeCol = new TableColumn<>("Type");
+	    typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
+	    TableColumn<Transaction, Double> amtCol = new TableColumn<>("Amount");
+	    amtCol.setCellValueFactory(new PropertyValueFactory<>("amount"));
+	    TableColumn<Transaction, LocalDate> dateCol = new TableColumn<>("Date");
+	    dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+	    TableColumn<Transaction, String> descCol = new TableColumn<>("Description");
+	    descCol.setCellValueFactory(new PropertyValueFactory<>("desc"));
+	    
+	    transTable.getColumns().addAll(typeCol, amtCol, dateCol, descCol);
+	    transTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+	    
+	    accFilter.valueProperty().addListener((observable, oldValue, newValue) -> {
+	        filteredTransactions.setPredicate(transaction -> {
+	            String accountFilter = newValue.getName();
+	            if (transaction.getAccount().getName().equals(accountFilter)) {
+	                return true;
+	            } 
+	            else return false; 
+	        });
+	    });
+	    
+	    transTable.setOnMouseClicked((MouseEvent event) -> {
+	        if (event.getButton().equals(MouseButton.PRIMARY)) {
+	        	if (event.getClickCount() == 2) {
+	            int index = transTable.getSelectionModel().getSelectedIndex();
+	            Transaction t = transTable.getItems().get(index);
+	            
+	            stage.setScene(viewTransScene(t, accReportScene));
+	            System.out.println(t);
+	        	}
+	        }
+	    });
+	    
+	    back.setOnAction(e-> stage.setScene(homeScene));
+	    accFilter.setValue(accounts.getFirst());
+	    
+	    titleBox.getChildren().add(title);
+	    pane.getChildren().addAll(titleBox,accFilter, transTable, back);    
+	    pane.setSpacing(20);
+	 
+	    accReportScene = new Scene(pane, 600,600);
+	    accReportScene.getStylesheets().add(CSS_FILE_PATH);
+	    return accReportScene;
+	}
+	//Creates Scene that lists details about a transaction
+	private Scene viewTransScene(Transaction t, Scene scene)
+	{
+		VBox pane = new VBox();
+		HBox titleBox = new HBox();
+		
+		Label title = new Label("View Transaction");
+		Label acc = new Label("Account Name: " + t.getAccount().getName());
+		Label type = new Label("TransactionType: "+t.getType().getName());
+		Label transDate = new Label("Date of Transaction: " + t.getDate().toString());
+		Label amt = new Label("Amount: " + t.getAmount());
+		Label desc = new Label("Description: " + t.getDesc());
+		Button back = new Button("Back");
+		
+		titleBox.getChildren().add(title);
+		pane.getChildren().addAll(titleBox,acc,type,transDate,amt,desc,back);
+		pane.setSpacing(20);
+		
+		back.setOnAction(e-> stage.setScene(scene));
+		viewTransScene = new Scene(pane);
+		viewTransScene.getStylesheets().add(CSS_FILE_PATH);
+		return viewTransScene;
+	}
 	/**
 	 * Checks that desired new account balance is a valid number.
 	 * 

@@ -30,7 +30,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 @SuppressWarnings("deprecation")
-public class Main extends Application{
+public class Main extends Application{ 
 	
 	Stage stage;
 	
@@ -42,6 +42,7 @@ public class Main extends Application{
 	Scene newSchedTransScene;
 	Scene schedTransScene;
 	Scene accReportScene;
+	Scene transReportScene;
 	Scene viewTransScene;
 	
 	LocalDate date = LocalDate.now();
@@ -120,8 +121,8 @@ public class Main extends Application{
 		newTransTypeBtn.setOnAction(e -> stage.setScene(newTransTypeScene));
 		newSchedTransBtn.setOnAction(e -> stage.setScene(getEditSchedTransScene(null)));
 		schedTransBtn.setOnAction(e -> stage.setScene(getSchedTransScene()));
-		reportBtn.setOnAction(e -> stage.setScene(getTransactionReportScene()));
 		accReportBtn.setOnAction(e -> stage.setScene(getAccountReportScene()));
+		reportBtn.setOnAction(e -> stage.setScene(getTransactionReportScene()));
 
 		if(startup)
 		{
@@ -383,9 +384,9 @@ public class Main extends Application{
 	    VBox right = new VBox();
 	
 	    Label title = new Label("Transaction Report - Filter by Type");
+	    ArrayList<TransactionType> types = FileIOHandler.loadTransTypes();
 	    ChoiceBox<TransactionType> typeFilter = new ChoiceBox<>();
-	    typeFilter.getItems().addAll(FileIOHandler.loadTransTypes());
-	    typeFilter.setPromptText("Select Transaction Type");
+	    typeFilter.getItems().addAll(types);
 	
 	    TableView<Transaction> reportTable = new TableView<>();
 	    TableColumn<Transaction, Account> accCol = new TableColumn<>("Account");
@@ -414,10 +415,23 @@ public class Main extends Application{
 	    });
 	
 	    reportTable.setItems(filteredTransactions);
-	
+	    
+	    reportTable.setOnMouseClicked((MouseEvent event) -> {
+	        if (event.getButton().equals(MouseButton.PRIMARY)) {
+	        	if (event.getClickCount() == 2) {
+	            int index = reportTable.getSelectionModel().getSelectedIndex();
+	            Transaction t = reportTable.getItems().get(index);
+	            
+	            stage.setScene(viewTransScene(t, transReportScene));
+	            System.out.println(t);
+	        	}
+	        }
+	   
+	    });
 	    Button backBtn = new Button("Back");
 	    backBtn.setOnAction(e -> stage.setScene(homeScene));
-	
+	    typeFilter.setValue(types.getFirst());
+
 	    top.getChildren().addAll(title);
 	    pane.setTop(top);
 	    pane.setRight(right);
@@ -426,10 +440,10 @@ public class Main extends Application{
 	    center.setSpacing(10);
 	    pane.setCenter(center);
 	
-	    Scene reportScene = new Scene(pane, 800, 600);
-	    reportScene.getStylesheets().add(CSS_FILE_PATH);
+	    transReportScene = new Scene(pane, 800, 600);
+	    transReportScene.getStylesheets().add(CSS_FILE_PATH);
 	
-	    return reportScene;
+	    return transReportScene;
 	}
 
 	/**

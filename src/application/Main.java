@@ -52,7 +52,6 @@ public class Main extends Application{
 	@Override
     public void start(Stage stage) {
 		
-		startup = true;
 		this.stage = stage;
 	
 		newAccScene = getNewAccScene();
@@ -63,6 +62,19 @@ public class Main extends Application{
         stage.setScene(homeScene);
         stage.show();
 		
+        String popup = new String();
+		ArrayList<ScheduledTransaction> transactions = FileIOHandler.loadScheduledTransactions();
+		FilteredList<ScheduledTransaction> filteredTransactions = new FilteredList<>(FXCollections.observableArrayList(transactions), p -> true);
+		filteredTransactions.setPredicate(transaction -> transaction.getDay() == date.getDayOfMonth());
+		for(ScheduledTransaction transaction: filteredTransactions) {
+			
+			popup += "\n- " + transaction.getName();
+		}
+		if(filteredTransactions.size() > 0) {
+			showAlert("Transactions Due", "Scheduled Transactions due today: " + popup);
+		} else {
+			showAlert("Transactions Due", "No transactions due today! " + popup);
+		}
     }
 
 	/**
@@ -723,13 +735,18 @@ public class Main extends Application{
 		transScene.getStylesheets().add(CSS_FILE_PATH);
 		return transScene;
 	}
-	//Creates a Scene that reports all the transactions under an account
-	public Scene getAccountReportScene() 
-	{
+	
+	@SuppressWarnings("unchecked")
+	/**
+	 * Scene to show transaction report by account.
+	 * 
+	 * @return
+	 */
+	public Scene getAccountReportScene() {
 		VBox pane = new VBox();
 	    HBox titleBox = new HBox();
 	    
-	    Label title = new Label("Account Report");
+	    Label title = new Label("Transaction Report - Account");
 	    ChoiceBox<Account> accFilter = new ChoiceBox<>();
 	    ArrayList<Account> accounts = FileIOHandler.loadAccounts();
 	    accFilter.getItems().addAll(accounts);
@@ -783,7 +800,13 @@ public class Main extends Application{
 	    accReportScene.getStylesheets().add(CSS_FILE_PATH);
 	    return accReportScene;
 	}
-	//Creates Scene that lists details about a transaction
+
+	/**
+	 * Shows details of selected transaction t.
+	 * @param t
+	 * @param scene
+	 * @return
+	 */
 	private Scene viewTransScene(Transaction t, Scene scene)
 	{
 		VBox pane = new VBox();
@@ -806,6 +829,7 @@ public class Main extends Application{
 		viewTransScene.getStylesheets().add(CSS_FILE_PATH);
 		return viewTransScene;
 	}
+	
 	/**
 	 * Checks that desired new account balance is a valid number.
 	 * 

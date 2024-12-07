@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-//import java.util.Collections;
 
 public class FileIOHandler {
 	
@@ -32,16 +31,12 @@ public class FileIOHandler {
 				String name = parts[0].trim();
 				String date = parts[1].trim();
 				String balance = parts[2].trim();
-//				LocalDate date = LocalDate.parse(parts[1].trim());
-//				double balance = Double.valueOf(parts[2].trim());
-//				Account acc = new Account(name, date, balance);
 				String[] acc = {name, date, balance};
 				accounts.add(acc);
 			} 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-//		Collections.sort(accounts);
 		return accounts;
 	}
 	
@@ -161,7 +156,6 @@ public class FileIOHandler {
 				for (String s : types) {
 					if (s.equals(typeString)) type = s;
 				}
-//				LocalDate date = LocalDate.parse(parts[2].trim());
 				String date = parts[2].trim();
 				String desc = parts[3].trim();
 				String amt = parts[4].trim();

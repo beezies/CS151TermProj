@@ -1,7 +1,7 @@
 package entities;
 
 
-public class ScheduledTransaction implements Comparable<ScheduledTransaction> {
+public class ScheduledTransaction implements TransactionInt<ScheduledTransaction> {
 
 	private long ID;
 	private Account account;
@@ -47,17 +47,18 @@ public class ScheduledTransaction implements Comparable<ScheduledTransaction> {
 	public int getDay() {
 		return day;
 	}
-	public double getAmount() {
+	
+	public Double getAmount() {
 		return amount;
-	}
-	@Override
-	public int compareTo(ScheduledTransaction schedule)
-	{
-		return day -schedule.getDay();
 	}
 	
 	public String toString() {
 		return name;
+	}
+
+	@Override
+	public int compareTo(ScheduledTransaction t) {
+		return day - t.getDay();
 	}
 
 }

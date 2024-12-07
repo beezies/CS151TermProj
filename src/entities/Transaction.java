@@ -2,7 +2,7 @@ package entities;
 
 import java.time.LocalDate;
 
-public class Transaction implements Comparable<Transaction>{
+public class Transaction implements TransactionInt<Transaction>{
 	
 	private long ID;
 	private Account account;
@@ -29,11 +29,6 @@ public class Transaction implements Comparable<Transaction>{
 	public long getID() {
 		return ID;
 	}
-	
-	@Override
-	public int compareTo(Transaction t) {
-		return t.getDate().compareTo(this.date);
-	}
 
 	public Account getAccount() {
 		return account;
@@ -57,5 +52,10 @@ public class Transaction implements Comparable<Transaction>{
 	
 	public String toString() {
 		return desc;
+	}
+
+	@Override
+	public int compareTo(Transaction o) {
+		return o.getDate().compareTo(this.date);
 	}
 }

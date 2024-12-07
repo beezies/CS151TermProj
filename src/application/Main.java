@@ -45,14 +45,15 @@ public class Main extends Application{
 	Scene viewTransScene;
 	
 	LocalDate date = LocalDate.now();
-	
+	boolean startup;
 	private static final String CSS_FILE_PATH = "application/style/financeStyle.css";
 
 	@Override
     public void start(Stage stage) {
 		
+		startup = true;
 		this.stage = stage;
-				
+	
 		newAccScene = getNewAccScene();
 		homeScene = getHomeScene();
 		transScene = getTransScene();
@@ -121,7 +122,23 @@ public class Main extends Application{
 		schedTransBtn.setOnAction(e -> stage.setScene(getSchedTransScene()));
 		reportBtn.setOnAction(e -> stage.setScene(getTransactionReportScene()));
 		accReportBtn.setOnAction(e -> stage.setScene(getAccountReportScene()));
-		
+
+		if(startup)
+		{
+			String popup = new String("");
+			ArrayList<ScheduledTransaction> transactions = FileIOHandler.loadScheduledTransactions();
+			FilteredList<ScheduledTransaction> filteredTransactions = new FilteredList<>(FXCollections.observableArrayList(transactions), p -> true);
+			filteredTransactions.setPredicate(transaction -> transaction.getDay() == date.getDayOfMonth());
+			for(ScheduledTransaction transaction: filteredTransactions)
+			{
+		    popup = popup+ ", " +transaction.getName() ;
+			}
+			if(filteredTransactions.size() > 0)
+			{
+				showAlert("Transactions Due", "Scheduled Transactions due Today" + popup);
+			}
+			startup = false;
+		}
 		homeScene = new Scene(pane, 800, 700);
 		homeScene.getStylesheets().add(CSS_FILE_PATH);
 		return homeScene;

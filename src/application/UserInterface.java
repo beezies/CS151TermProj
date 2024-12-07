@@ -9,8 +9,9 @@ public class UserInterface extends Application{
 	@Override
 	public void start(Stage stage) {
 		// TODO Auto-generated method stub
-		
 	}
+	
+	
 	
 	private void showAlert(String title, String message) {
 		Alert alert = new Alert(Alert.AlertType.WARNING);

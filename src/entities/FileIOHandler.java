@@ -84,7 +84,6 @@ public class FileIOHandler {
 		try (BufferedReader reader = new BufferedReader(new FileReader(TRANSACTIONTYPES_FILE_PATH))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
-//				TransactionType transType = new TransactionType(line);
 				transTypesS.add(line.trim());
 			} 
 		} catch (Exception e) {

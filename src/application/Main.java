@@ -110,8 +110,8 @@ public class Main extends Application {
 			Button newTransBtn = new Button("Add Transaction");
 			Button newSchedTransBtn = new Button("Add Scheduled Transaction");
 			Button newTransTypeBtn = new Button("Add new Transaction Type");
-			Button reportBtn = new Button("Transaction Report");
-			Button accReportBtn = new Button("Account Report");
+			Button reportBtn = new Button("Transaction Report - Type");
+			Button accReportBtn = new Button("Transaction Report - Account");
 
 			TableView<Account> accTable = new TableView<Account>();
 			TableColumn<Account, String> label = new TableColumn<>("Accounts");
@@ -889,7 +889,7 @@ public class Main extends Application {
 				if (typeString.equals(t.getName())) type = t;
 			}
 			LocalDate date = LocalDate.parse(s[3]);
-			String desc = s[3];
+			String desc = s[4];
 			Double amt = Double.valueOf(s[5]);
 			long ID = Long.valueOf(s[0]);
 			
